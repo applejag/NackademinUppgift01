@@ -9,7 +9,7 @@ namespace SimplessCipher
 {
     class Program
     {
-        static readonly string LETTER_TABLE = "abcdefghijklmnopqrstuvwxyzåäöüïëñôûîêâABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖÜÏËÑÔÛÎÊÂ -_:;.,?!0123456789$€@£(){}[]<>|/\\\"'^".Shuffle(0);
+        static readonly string LETTER_TABLE = "abcdefghijklmnopqrstuvwxyzåäöABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ -_:;.,?!0123456789".Shuffle(0);
         static readonly int LETTER_COUNT = LETTER_TABLE.Length;
 
         static void Main(string[] args)
