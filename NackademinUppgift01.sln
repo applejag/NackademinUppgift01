@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiceSim", "DiceSim\DiceSim.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{D82B9099-D27C-4991-AF07-6293AF07C19C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuessTheNumber", "GuessTheNumber\GuessTheNumber.csproj", "{C1302C55-94A1-4AB0-88E1-97572739DBA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D82B9099-D27C-4991-AF07-6293AF07C19C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D82B9099-D27C-4991-AF07-6293AF07C19C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D82B9099-D27C-4991-AF07-6293AF07C19C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1302C55-94A1-4AB0-88E1-97572739DBA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1302C55-94A1-4AB0-88E1-97572739DBA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1302C55-94A1-4AB0-88E1-97572739DBA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1302C55-94A1-4AB0-88E1-97572739DBA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

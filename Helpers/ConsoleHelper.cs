@@ -14,15 +14,31 @@ namespace Helpers
             while (true)
             {
                 Console.Write(question);
-                string input = Console.ReadLine();
+                string input = Console.ReadLine()
+                    .Trim();
 
-                if (int.TryParse(input, out int result) == false)
-                {
-                    Console.WriteLine($"\"{input}\" är ett ogiltigt heltal! Försök igen.");
-                }
-                else
+                if (int.TryParse(input, out int result))
                 {
                     return result;
+                }
+
+                Console.WriteLine($"\"{input}\" kunde inte omvandlas till en siffra! Försök igen.");
+
+            }
+        }
+        
+        public static string AskForSpecificString(string question, params string[] alternatives)
+        {
+            while (true)
+            {
+                Console.Write(question);
+                string input = Console.ReadLine()
+                    .Trim();
+
+                foreach(string alt in alternatives)
+                {
+                    if (input.ToLower() == alt.ToLower())
+                        return alt;
                 }
             }
         }
