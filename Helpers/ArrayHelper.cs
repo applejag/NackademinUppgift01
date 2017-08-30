@@ -59,6 +59,11 @@ namespace Helpers
             array.Shuffle();
             return new string(array);
         }
+        /*
+        public static T[] GetRow<T>(this T[,] array2D, int row)
+        {
+            
+        }*/
 
     }
 }
