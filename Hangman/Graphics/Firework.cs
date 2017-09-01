@@ -12,15 +12,17 @@ namespace Hangman.Graphics
 {
     public class Firework : Moving
     {
+        public const float GRAVITY = 9.81f;
         protected Trail trail;
         protected float start;
         protected float lifetime;
 
         public Firework(float lifetime = 5) : base()
         {
-            Position = new Vector2(RandomHelper.Range(0f, Drawing.Width), Drawing.Height);
+            Position = new Vector2(Drawing.Width * 0.5f, Drawing.Height * .5f);
             trail = new Trail(2, Drawing.COLOR_LIGHT_BLUE);
-            velocity = new Vector2(-20, RandomHelper.Range(-2f, 2f));
+            trail.SetParent(this);
+            Velocity = new Vector2(RandomHelper.Range(-2f, 2f), -20);
 
             start = Time.Seconds;
             this.lifetime = lifetime;
@@ -36,12 +38,13 @@ namespace Hangman.Graphics
         {
             base.Update();
 
+            Velocity += Vector2.Down * Time.DeltaTime * GRAVITY;
+
             if (Time.Seconds - start > lifetime)
             {
                 var particle = new Particle
                 {
-                    Position = new Vector2()
-                    
+                    Position = Position
                 };
 
                 Destroy();
@@ -50,6 +53,8 @@ namespace Hangman.Graphics
 
         public class Particle : Moving
         {
+            public const float GRAVITY = 9.81f;
+
             public Particle() : base()
             {
                 var trail = new Trail(0.2, Drawing.COLOR_CYAN);
@@ -70,7 +75,7 @@ namespace Hangman.Graphics
                 base.Update();
 
                 // Gravity
-                velocity += Vector2.Down * Time.DeltaTime;
+                Velocity += Vector2.Down * Time.DeltaTime * GRAVITY;
             }
         }
     }

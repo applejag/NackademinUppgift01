@@ -6,15 +6,16 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Helpers
+namespace ConsoleDrawing
 {
     public static class Time
     {
         static Stopwatch stopwatch = Stopwatch.StartNew();
-        static Timer timer = new Timer(FrameCallback, null, 0, millisecondsPerFrame);
+        static ManualResetEvent timerStopper = new ManualResetEvent(false);
+        static RegisteredWaitHandle timerWaitHandle;
         private static float deltaTime = 0;
         private static long deltaMilliseconds = 0;
-        private static long millisecondsPerFrame = (long)(1000 / framesPerSecond);
+        private static long millisecondsPerFrame;
         private static float framesPerSecond = 30;
         private static long lastFrameTime = 0;
 
@@ -28,19 +29,38 @@ namespace Helpers
             set
             {
                 framesPerSecond = value;
-                millisecondsPerFrame = (long)(1000 / framesPerSecond);
-                timer.Change(0, millisecondsPerFrame);
+                StartFrameTimer();
             }
         }
         
-        static void FrameCallback(object state)
+        public static void StartFrameTimer()
+        {
+            timerStopper.Set();
+            timerStopper = new ManualResetEvent(false);
+            
+            millisecondsPerFrame = (long)(1000 / framesPerSecond);
+
+            timerWaitHandle = ThreadPool.RegisterWaitForSingleObject(timerStopper, FrameCallback, null, millisecondsPerFrame, false);
+        }
+
+        static void FrameCallback(object state, bool timedOut)
         {
             long now = stopwatch?.ElapsedMilliseconds ?? 0;
             deltaMilliseconds = now - lastFrameTime;
             deltaTime = deltaMilliseconds * 0.001f;
+            
+            // Fix size
+            if (Console.WindowWidth != Drawing.Width || Console.WindowHeight != Drawing.Height)
+                Drawing.SetWindowSize(Console.WindowWidth, Console.WindowHeight);
 
+            // Update
             OnEventUpdate?.Invoke();
+
+            // Draw
+            Drawing.ResetColorAttribute();
+            Drawing.Clear();
             OnEventDraw?.Invoke();
+            Drawing.Render();
 
             lastFrameTime = now;
         }

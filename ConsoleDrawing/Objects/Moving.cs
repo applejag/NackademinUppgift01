@@ -10,11 +10,11 @@ namespace ConsoleDrawing.Objects
 {
     public abstract class Moving : Drawable
     {
-        public Vector2 velocity { get; set; }
+        public Vector2 Velocity { get; set; }
 
         public override void Update()
         {
-            localPosition += velocity * Time.DeltaTime;
+            localPosition += Velocity * Time.DeltaTime;
         }
     }
 }

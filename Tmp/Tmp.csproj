@@ -53,6 +53,14 @@
       <Project>{D11A42D7-2179-4685-977C-D15841A43B63}</Project>
       <Name>ConsoleDrawing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hangman\Hangman.csproj">
+      <Project>{7B16F7FB-D400-499D-B2B6-115D53279D3D}</Project>
+      <Name>Hangman</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Helpers\Helpers.csproj">
+      <Project>{D82B9099-D27C-4991-AF07-6293AF07C19C}</Project>
+      <Name>Helpers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -10,8 +10,9 @@ namespace ConsoleDrawing.Objects
 {
     public abstract class Drawable
     {
-        //public static readonly HashSet<Drawable> all = new HashSet<Drawable>();
+        public static readonly HashSet<Drawable> all = new HashSet<Drawable>();
 
+        private bool m_Initiated = false;
         private bool m_Destroyed = false;
         private bool m_Enabled = true;
         private Drawable m_Parent = null;
@@ -106,6 +107,12 @@ namespace ConsoleDrawing.Objects
             {
                 Time.OnEventUpdate += Update;
                 Time.OnEventDraw += Draw;
+
+                if (!m_Initiated)
+                {
+                    m_Initiated = true;
+                    all.Add(this);
+                }
             }
             else
             {
@@ -137,6 +144,9 @@ namespace ConsoleDrawing.Objects
             }
 
             SetParent(null);
+
+            if (m_Initiated)
+                all.Remove(this);
         }
 
         /// <summary>
