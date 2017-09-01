@@ -1,4 +1,6 @@
 ﻿using ConsoleDrawing;
+using ConsoleDrawing.Objects;
+using ConsoleDrawing.Structs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,32 +11,83 @@ namespace Tmp
 {
     class Program
     {
+        const string LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+
         static void Main(string[] args)
         {
-            Console.CursorVisible = false;
             Console.Title = "Kalles flygande-rut akvarium";
-            var con = new Drawing();
-            
-            Block block1 = new Block(5,3);
-            Block block2 = new Block(41,25,Drawing.BG_CYAN);
-            Block block3 = new Block(100, 27,Drawing.BG_YELLOW);
+            Console.SetWindowSize(Console.WindowWidth, Console.WindowHeight);
+
+            Drawing.CursorVisible = false;
+
+            /*
+            int length = 2400;
+            StringBuilder builder = new StringBuilder(length, length);
+            Random generator = new Random();
+            int numLetters = LETTERS.Length;
+            for (int i=0; i<builder.MaxCapacity; i++)
+            {
+                builder.Append(LETTERS[generator.Next(numLetters)]);
+            }
+
+            string text = builder.ToString();
+            bool rendered = false;
 
             while (true)
             {
-                con.BackgroundColor = Drawing.BG_RED;
-                con.Fill(' ');
+                if (Drawing.Width != Console.WindowWidth || Drawing.Height != Console.WindowHeight || !rendered)
+                {
+                    Drawing.SetWindowSize(Console.WindowWidth, Console.WindowHeight);
 
-                block1.Update(con);
-                block2.Update(con);
-                block3.Update(con);
+                    Drawing.Clear();
+                    Drawing.WriteLine("Hello world!");
+                    Drawing.WriteLine("Foo bar");
+                    Drawing.WriteLine("Moo doo");
+                    Drawing.WriteLine(text);
 
-                con.Render();
+                    Drawing.Render();
+                    rendered = true;
+                }
+            }//*/
+            
+            Block block1 = new Block(5, 3, bgColor: Drawing.COLOR_BLACK);
+            Block block2 = new Block(41, 25, bgColor: Drawing.COLOR_LIGHT_CYAN);
+            Block block3 = new Block(100, 27, bgColor: Drawing.COLOR_LIGHT_MAGENTA);
+            Block block4 = new Block(Drawing.Width, Drawing.Height-3, bgColor: Drawing.COLOR_LIGHT_GREEN);
 
-                System.Threading.Thread.Sleep(1000 / 60);
+            while (true)
+            {
+                if (Drawing.Width != Console.WindowWidth || Drawing.Height != Console.WindowHeight)
+                    Drawing.SetWindowSize(Console.WindowWidth, Console.WindowHeight);
+
+                Drawing.BackgroundColor = Drawing.COLOR_RED;
+                Drawing.Fill(' ');
+
+                //con.BackgroundColor = Drawing.COLOR_LIGHT_RED;
+                //con.FillLine(block1.X, block1.Y, block2.X, block2.Y, ' ');
+                //con.FillLine(block2.X, block2.Y, block3.X, block3.Y, ' ');
+                //con.FillLine(block3.X, block3.Y, block4.X, block4.Y, ' ');
+                //con.FillLine(block4.X, block4.Y, block1.X, block1.Y, ' ');
+
+
+                block1.trail.Draw();
+                block2.trail.Draw();
+                block3.trail.Draw();
+                block4.trail.Draw();
+                block1.Update();
+                block2.Update();
+                block3.Update();
+                block4.Update();
+
+                Drawing.Render();
+
+                System.Threading.Thread.Sleep(1000 / 45);
 
             }
 
+#pragma warning disable CS0162 // Unreachable code detected
             Console.ReadKey();
+#pragma warning restore CS0162 // Unreachable code detected
 
         }
 
@@ -42,28 +95,27 @@ namespace Tmp
         {
             static Random random = new Random();
             static List<Block> allBlocks = new List<Block>();
-
-            Drawing.SmallRect rect;
-            int xVel = 1;
-            int yVel = 1;
-
+            
             public byte backgroundColor;
 
-            public Block(int x, int y, byte color = Drawing.BG_GREEN)
+            Rect rect;
+            int xVel = 1;
+            int yVel = 1;
+            public readonly Trail trail;
+
+            public Block(int x, int y, byte bgColor)
             {
-                backgroundColor = color;
-                rect = new Drawing.SmallRect
-                {
-                    Top = (short)y,
-                    Left = (short)x,
-                    Width = 10,
-                    Height = 3,
-                };
+                backgroundColor = bgColor;
+                rect = new Rect (x, y, 10, 3);
 
                 xVel = random.Next(2) == 1 ? 1 : -1;
                 yVel = random.Next(2) == 1 ? 1 : -1;
 
                 allBlocks.Add(this);
+
+                trail = new Trail(2, bgColor);
+
+                trail.Position = rect.Center;
             }
 
             ~Block()
@@ -71,11 +123,11 @@ namespace Tmp
                 allBlocks.Remove(this);
             }
 
-            public void Update(Drawing console)
+            public void Update()
             {
                 // Move rect
-                rect.Left += (short)xVel;
-                rect.Top += (short)yVel;
+                rect.x += (short)xVel;
+                rect.y += (short)yVel;
 
                 // Check collision with other blocks
                 var predict = rect;
@@ -84,23 +136,23 @@ namespace Tmp
                 {
                     if (other == this) continue;
 
-                    predict.Left = (short)(rect.Left + xVel);
-                    predict.Top = rect.Top;
+                    predict.x = (short)(rect.x + xVel);
+                    predict.y = rect.y;
 
                     if (predict.IsColliding(other.rect))
                     {
-                        if (other.rect.Left > rect.Left)
+                        if (other.rect.x > rect.x)
                             xVel = -1;
                         else
                             xVel = 1;
                     }
 
-                    predict.Left = rect.Left;
-                    predict.Top = (short)(rect.Top + yVel);
+                    predict.x = rect.x;
+                    predict.y = (short)(rect.y + yVel);
 
                     if (predict.IsColliding(other.rect))
                     {
-                        if (other.rect.Top > rect.Top)
+                        if (other.rect.y > rect.y)
                             yVel = -1;
                         else
                             yVel = 1;
@@ -108,22 +160,25 @@ namespace Tmp
                 }
 
                 // Check collision with walls
-                if (rect.Left + rect.Width >= console.Width)
+                if (rect.x + rect.width >= Drawing.Width)
                     xVel = -Math.Abs(xVel);
-                else if (rect.Left <= 0)
+                else if (rect.x <= 0)
                     xVel = Math.Abs(xVel);
 
-                if (rect.Top + rect.Height >= console.Height)
+                if (rect.y + rect.height >= Drawing.Height)
                     yVel = -Math.Abs(yVel);
-                else if (rect.Top <= 0)
+                else if (rect.y <= 0)
                     yVel = Math.Abs(yVel);
 
                 // Draw
-                console.BackgroundColor = backgroundColor;
-                console.FillRect(rect, ' ');
+                trail.Position = rect.Center;
+                trail.Update();
 
-                console.SetCursorPosition(rect.Left, rect.Top);
-                console.Write(" Hello :) ");
+                Drawing.BackgroundColor = backgroundColor;
+                Drawing.FillRect(rect, ' ');
+
+                Drawing.SetCursorPosition(rect.x, rect.y);
+                Drawing.Write(" Hello :) ");
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32.SafeHandles;
+﻿using ConsoleDrawing.Structs;
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,129 +10,157 @@ using System.Threading.Tasks;
 
 namespace ConsoleDrawing
 {
-    public class Drawing
+    public static class Drawing
     {
-        public const byte FG_BLACK = 0x00;
-        public const byte FG_INTENSITY = 0x08;
-        public const byte FG_RED = 0x04;
-        public const byte FG_GREEN = 0x02;
-        public const byte FG_BLUE = 0x01;
-        public const byte FG_YELLOW = FG_GREEN | FG_RED;
-        public const byte FG_MAGENTA = FG_BLUE | FG_RED;
-        public const byte FG_CYAN = FG_BLUE | FG_GREEN;
-        public const byte FG_GREY = FG_RED | FG_GREEN | FG_BLUE;
+        #region Constants
+        public const byte COLOR_BLACK = 0x00;
+        public const byte COLOR_INTENSITY = 0x88;
+        public const byte COLOR_RED = 0x44;
+        public const byte COLOR_GREEN = 0x22;
+        public const byte COLOR_BLUE = 0x11;
+        public const byte COLOR_YELLOW = COLOR_GREEN | COLOR_RED;
+        public const byte COLOR_MAGENTA = COLOR_BLUE | COLOR_RED;
+        public const byte COLOR_CYAN = COLOR_BLUE | COLOR_GREEN;
+        public const byte COLOR_GREY = COLOR_RED | COLOR_GREEN | COLOR_BLUE;
 
-        public const byte FG_LIGHT_RED = FG_RED | FG_INTENSITY;
-        public const byte FG_LIGHT_GREEN = FG_GREEN | FG_INTENSITY;
-        public const byte FG_LIGHT_BLUE = FG_BLUE | FG_INTENSITY;
-        public const byte FG_LIGHT_YELLOW = FG_YELLOW | FG_INTENSITY;
-        public const byte FG_LIGHT_MAGENTA = FG_MAGENTA | FG_INTENSITY;
-        public const byte FG_LIGHT_CYAN = FG_CYAN | FG_INTENSITY;
-        public const byte FG_WHITE = FG_GREY | FG_INTENSITY;
+        public const byte COLOR_LIGHT_RED = COLOR_RED | COLOR_INTENSITY;
+        public const byte COLOR_LIGHT_GREEN = COLOR_GREEN | COLOR_INTENSITY;
+        public const byte COLOR_LIGHT_BLUE = COLOR_BLUE | COLOR_INTENSITY;
+        public const byte COLOR_LIGHT_YELLOW = COLOR_YELLOW | COLOR_INTENSITY;
+        public const byte COLOR_LIGHT_MAGENTA = COLOR_MAGENTA | COLOR_INTENSITY;
+        public const byte COLOR_LIGHT_CYAN = COLOR_CYAN | COLOR_INTENSITY;
+        public const byte COLOR_WHITE = COLOR_GREY | COLOR_INTENSITY;
 
-        public const byte BG_BLACK = 0x00;
-        public const byte BG_INTENSITY = 0x80;
-        public const byte BG_RED = 0x40;
-        public const byte BG_GREEN = 0x20;
-        public const byte BG_BLUE = 0x10;
-        public const byte BG_YELLOW = BG_GREEN | BG_RED;
-        public const byte BG_MAGENTA = BG_BLUE | BG_RED;
-        public const byte BG_CYAN = BG_BLUE | BG_GREEN;
-        public const byte BG_GREY = BG_RED | BG_GREEN | BG_BLUE;
+        private const byte P_COLOR_FOREGROUND = 0x0F;
+        private const byte P_COLOR_BACKGROUND = 0xF0;
+        private const byte P_COLOR_DEFAULT = (COLOR_GREY & P_COLOR_FOREGROUND) | (COLOR_BLACK & P_COLOR_BACKGROUND);
+        #endregion
 
-        public const byte BG_LIGHT_RED = BG_RED | BG_INTENSITY;
-        public const byte BG_LIGHT_GREEN = BG_GREEN | BG_INTENSITY;
-        public const byte BG_LIGHT_BLUE = BG_BLUE | BG_INTENSITY;
-        public const byte BG_LIGHT_YELLOW = BG_YELLOW | BG_INTENSITY;
-        public const byte BG_LIGHT_MAGENTA = BG_MAGENTA | BG_INTENSITY;
-        public const byte BG_LIGHT_CYAN = BG_CYAN | BG_INTENSITY;
-        public const byte BG_WHITE = BG_GREY | BG_INTENSITY;
+        #region Private fields
+        private static SafeFileHandle fileHandler = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
 
-        private SafeFileHandle fileHandler;
+        private static CharInfo[] buffer = CharInfo.NewBuffer(Console.WindowWidth, Console.WindowHeight);
+        private static int bufferSize = Console.WindowWidth * Console.WindowHeight;
+        private static SmallRect bufferRect = new SmallRect {
+            Left = 0, Top = 0, Width = (short)Console.WindowWidth, Height = (short)Console.WindowHeight
+        };
 
-        private readonly CharInfo[] buffer;
-        private readonly int bufferSize;
-        private SmallRect bufferRect;
+        private static short bufferWidth = (short)Console.WindowHeight;
+        private static short bufferHeight = (short)Console.WindowWidth;
 
-        private readonly short windowWidth;
-        private readonly short windowHeight;
-        private int currentBufferIndex;
-        private byte currentAttribute = FG_GREY | BG_BLACK;
+        private static int currentBufferIndex = 0;
+        private static byte currentAttribute = COLOR_GREY & P_COLOR_FOREGROUND;
+        #endregion
 
-        public short Width => windowWidth;
-        public short Height => windowHeight;
+        #region Properties
+        public static int Width => bufferWidth;
+        public static int Height => bufferHeight;
 
-        public int CursorX
+        public static bool CursorVisible { get; set; } = true;
+
+        public static int CursorX
         {
-            get => currentBufferIndex % windowWidth;
+            get => currentBufferIndex % bufferWidth;
             set
             {
                 int y = CursorY;
-                int index = y * windowWidth + value;
-                if (index < 0 || index >= bufferSize)
-                    throw new ArgumentOutOfRangeException(nameof(value), value, "Position is outside window!");
-                else
-                    currentBufferIndex = index;
+                int index = y * bufferWidth + value;
+                currentBufferIndex = index;
             }
         }
 
-        public int CursorY
+        public static int CursorY
         {
-            get => currentBufferIndex / windowWidth;
+            get => currentBufferIndex / bufferWidth;
             set
             {
                 int x = CursorX;
-                int index = value * windowWidth + x;
-                if (index < 0 || index >= bufferSize)
-                    throw new ArgumentOutOfRangeException(nameof(value), value, "Position is outside window!");
-                else
-                    currentBufferIndex = index;
+                int index = value * bufferWidth + x;
+                currentBufferIndex = index;
             }
         }
 
-        public byte ForegroundColor
+        public static byte ForegroundColor
         {
-            get => (byte)(currentAttribute & 0x0F);
-            // Only take foreground bits from value, combine with previous background bits
-            set { currentAttribute = (byte)((value & 0x0F) | (currentAttribute & 0xF0)); }
+            get => (byte)(currentAttribute & P_COLOR_FOREGROUND);
+            set { currentAttribute = (byte)((value & P_COLOR_FOREGROUND) | (currentAttribute & P_COLOR_BACKGROUND)); }
         }
 
-        public byte BackgroundColor
+        public static byte BackgroundColor
         {
-            get => (byte)(currentAttribute & 0xF0);
-            // Only take background bits from value, combine with previous foreground bits
-            set { currentAttribute = (byte)((value & 0xF0) | (currentAttribute & 0x0F)); }
+            get => (byte)(currentAttribute & P_COLOR_BACKGROUND);
+            set { currentAttribute = (byte)((value & P_COLOR_BACKGROUND) | (currentAttribute & P_COLOR_FOREGROUND)); }
         }
+        #endregion
 
+        #region Drawing methods
 
-        public Drawing()
-        {
-            fileHandler = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
-
-            windowHeight = (short)Console.WindowHeight;
-            windowWidth = (short)Console.WindowWidth;
-
-            bufferSize = windowWidth * windowHeight;
-            buffer = new CharInfo[bufferSize];
-            bufferRect = new SmallRect { Left = 0, Top = 0, Width = windowWidth, Height = windowHeight };
-        }
-
-        ~Drawing()
-        {
-            fileHandler?.Dispose();
-        }
-
-        public void Write(string text)
+        public static void WriteWrap(string text)
         {
             int length = text.Length;
+
             for (int b = currentBufferIndex, i = 0; b < bufferSize && i < length; b++, i++)
             {
                 buffer[b].Attributes = currentAttribute;
                 buffer[b].Char.UnicodeChar = text[i];
             }
+
+            currentBufferIndex += length;
         }
 
-        public void Fill(char letter)
+        public static void Write(string text)
+        {
+            int length = text.Length;
+            for (int b = currentBufferIndex, i = 0; b < bufferSize && i < length; b++, i++)
+            {
+                currentBufferIndex++;
+
+                buffer[b].Attributes = currentAttribute;
+                buffer[b].Char.UnicodeChar = text[i];
+
+                int x = b % bufferWidth;
+                if (x == bufferWidth - 1)
+                    break;
+            }
+        }
+
+        public static void Write(char letter)
+        {
+            if (currentBufferIndex >= 0 && currentBufferIndex < bufferSize)
+            {
+                buffer[currentBufferIndex].Char.UnicodeChar = letter;
+                buffer[currentBufferIndex].Attributes = currentAttribute;
+            }
+            currentBufferIndex++;
+        }
+
+        public static void WriteLine(string text)
+        {
+            WriteWrap(text);
+            currentBufferIndex = (CursorY + 1) * bufferWidth;
+        }
+
+        public static void Clear()
+        {
+            currentBufferIndex = 0;
+
+            Fill(' ');
+        }
+
+        public static void ClearLine()
+        {
+            int y = currentBufferIndex / bufferWidth;
+            currentBufferIndex = y * bufferWidth;
+
+            int stopAt = Math.Min(currentBufferIndex + bufferWidth, bufferSize);
+            for (int b = currentBufferIndex; b < stopAt; b++)
+            {
+                buffer[b].Attributes = currentAttribute;
+                buffer[b].Char.UnicodeChar = ' ';
+            }
+        }
+
+        public static void Fill(char letter)
         {
             for (int b = 0; b < bufferSize; b++)
             {
@@ -140,46 +169,166 @@ namespace ConsoleDrawing
             }
         }
 
-        public void FillRect(SmallRect rect, char letter)
+        public static void FillRect(Rect rect, char letter)
         {
-            int start = rect.Top * windowWidth + rect.Left;
-            int stop = (rect.Top + rect.Height - 1) * windowWidth + rect.Left + rect.Width;
-            stop = Math.Min(stop, bufferSize);
-            for (int b = start; b < stop; b++)
+            FillRect(rect.x, rect.y, rect.width, rect.height, letter);
+        }
+
+        public static void FillRect(int left, int top, int width, int height, char letter)
+        {
+            int right = left + width;
+            int bottom = top + height;
+            for (int x = left; x < right; x++)
             {
-                int x = b % windowWidth;
-                if (x >= rect.Left && x < rect.Left + rect.Width)
+                for (int y = top; y < bottom; y++)
                 {
-                    buffer[b].Attributes = currentAttribute;
-                    buffer[b].Char.UnicodeChar = letter;
+                    FillPoint(x, y, letter);
                 }
             }
         }
 
-        public void Render()
+        public static void FillPoint(Point point, char letter)
         {
-            Console.SetWindowSize(windowWidth, windowHeight);
-            Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
+            FillPoint(point.x, point.y, letter);
+        }
+
+        public static void FillPoint(int x, int y, char letter)
+        {
+            if (x < 0 || x >= bufferWidth || y < 0 || y >= bufferHeight)
+                return;
+
+            int index = y * bufferWidth + x;
+            if (index >= 0 && index < bufferSize)
+            {
+                buffer[index].Char.UnicodeChar = letter;
+                buffer[index].Attributes = currentAttribute;
+            }
+        }
+
+        public static void FillLine(Point point1, Point point2, char letter)
+        {
+            FillLine(point1.x, point1.y, point2.x, point2.y, letter);
+        }
+
+        public static void FillLine(int x1, int y1, int x2, int y2, char letter)
+        {
+            // Generalized Bresenham's Line Drawing Algorithm
+            int x = x1;
+            int y = y1;
+            int dx = Math.Abs(x2 - x1);
+            int dy = Math.Abs(y2 - y1);
+            int sx = Math.Sign(x2 - x1);
+            int sy = Math.Sign(y2 - y1);
+            bool swap = false;
+
+            if (dy > dx)
+            {
+                int tmp = dx;
+                dx = dy;
+                dy = tmp;
+                swap = true;
+            }
+
+            int D = 2 * dy - dx;
+            for (int i = 0; i < dx; i++)
+            {
+                FillPoint(x, y, letter);
+                while (D >= 0)
+                {
+                    D -= 2 * dx;
+                    if (swap) x += sx;
+                    else y += sy;
+                }
+                D += 2 * dy;
+                if (swap) y += sy;
+                else x += sx;
+            }
+        }
+
+        public static void Render()
+        {
+            try
+            {
+                Console.SetBufferSize(
+                    Math.Max(Console.WindowWidth, bufferWidth),
+                    Math.Max(Console.WindowHeight, bufferHeight));
+            } catch { }
 
             bool b = WriteConsoleOutput(fileHandler, buffer,
-                new Coord(windowWidth, windowHeight),
+                new Coord(bufferWidth, bufferHeight),
                 new Coord(0, 0),
                 ref bufferRect);
-        }
 
-        public void SetCursorPosition(int x, int y)
-        {
-            int index = y * windowWidth + x;
-            if (index < 0 || index >= bufferSize)
-                throw new ArgumentOutOfRangeException($"x:{nameof(x)}, y:{nameof(y)}", $"x:{x}, y:{y}", "Position is outside window!");
+            int x = CursorX;
+            int y = CursorY;
+            bool inWindow = x >= 0 && x < bufferWidth && y >= 0 && y < bufferHeight;
+            if (inWindow && CursorVisible)
+            {
+                Console.SetCursorPosition(x, y);
+                Console.CursorVisible = true;
+            }
             else
-                currentBufferIndex = index;
+                Console.CursorVisible = false;
+
         }
 
-        public void SetColorAttribute(byte attribute)
+        #endregion
+
+        #region Setters methods
+
+        public static void SetWindowSize(int width, int height)
         {
-            currentAttribute = (byte)attribute;
+            short oldWidth = bufferWidth;
+            short oldHeight = bufferHeight;
+            int oldSize = bufferSize;
+            var oldBuffer = buffer;
+
+            bufferWidth = (short)width;
+            bufferHeight = (short)height;
+            bufferSize = bufferWidth * bufferHeight;
+            buffer = new CharInfo[bufferSize];
+            bufferRect = new SmallRect { Left = 0, Top = 0, Width = bufferWidth, Height = bufferHeight };
+
+            // Copy old buffer
+            var defaultChar = CharInfo.NewUnicodeChar(' ');
+
+            for (int b = 0; b < bufferSize; b++)
+            {
+                int x = b % bufferWidth;
+                int y = b / bufferWidth;
+
+                if (x < oldWidth && y < oldHeight)
+                {
+                    int i = y * oldWidth + x;
+                    buffer[b] = oldBuffer[i];
+                }
+                else
+                    buffer[b] = defaultChar;
+            }
+
         }
+
+        public static void SetCursorPosition(Point point)
+        {
+            SetCursorPosition(point.x, point.y);
+        }
+
+        public static void SetCursorPosition(int x, int y)
+        {
+            int index = y * bufferWidth + x;
+            currentBufferIndex = index;
+        }
+
+        public static void SetColorAttribute(byte attribute)
+        {
+            currentAttribute = attribute;
+        }
+
+        public static void ResetColorAttribute()
+        {
+            currentAttribute = P_COLOR_DEFAULT;
+        }
+        #endregion
 
         #region External functions
 
@@ -206,7 +355,7 @@ namespace ConsoleDrawing
         #region Datastructures
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct Coord
+        private struct Coord
         {
             public short X;
             public short Y;
@@ -219,34 +368,58 @@ namespace ConsoleDrawing
         };
 
         [StructLayout(LayoutKind.Explicit)]
-        public struct CharUnion
+        private struct CharUnion
         {
             [FieldOffset(0)] public char UnicodeChar;
             [FieldOffset(0)] public byte AsciiChar;
         }
 
         [StructLayout(LayoutKind.Explicit)]
-        public struct CharInfo
+        private struct CharInfo
         {
             [FieldOffset(0)] public CharUnion Char;
             [FieldOffset(2)] public short Attributes;
+
+            public static CharInfo NewAsciiChar(byte ascii, short attributes = P_COLOR_DEFAULT)
+            {
+                var info = new CharInfo();
+                info.Char.AsciiChar = ascii;
+                info.Attributes = attributes;
+                return info;
+            }
+
+            public static CharInfo NewUnicodeChar(char unicode, short attributes = P_COLOR_DEFAULT)
+            {
+                var info = new CharInfo();
+                info.Char.UnicodeChar = unicode;
+                info.Attributes = attributes;
+                return info;
+            }
+
+            public static CharInfo[] NewBuffer(int width, int height)
+            {
+                int bufferSize = width * height;
+                CharInfo[] buffer = new CharInfo[bufferSize];
+
+                // Fill buffer
+                var defaultChar = NewUnicodeChar(' ');
+
+                for (int b = 0; b < bufferSize; b++)
+                {
+                    buffer[b] = defaultChar;
+                }
+
+                return buffer;
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct SmallRect
+        private struct SmallRect
         {
             public short Left;
             public short Top;
             public short Width;
             public short Height;
-
-            public bool IsColliding(SmallRect other)
-            {
-                return Left < other.Left + other.Width
-                    && Left + Width > other.Left
-                    && Top < other.Top + other.Height
-                    && Top + Height > other.Top;
-            }
         }
 
         #endregion
