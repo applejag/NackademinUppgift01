@@ -7,30 +7,43 @@ using System.Threading.Tasks;
 using ConsoleDrawing;
 using Helpers;
 using ConsoleDrawing.Structs;
+using System.Media;
 
 namespace Hangman.Graphics
 {
     public class Firework : Moving
     {
+        public static readonly byte[] colors = { Colors.CYAN, Colors.GREEN, Colors.RED, Colors.YELLOW };
+
         public const float GRAVITY = 9.81f;
         protected Trail trail;
         protected float start;
         protected float lifetime;
 
-        public Firework(float lifetime = 5) : base()
+        byte color;
+        byte lightColor;
+
+        Action onExplosion;
+
+        public Firework(Action onExplosion) : base()
         {
-            Position = new Vector2(Drawing.Width * 0.5f, Drawing.Height * .5f);
-            trail = new Trail(2, Drawing.COLOR_LIGHT_BLUE);
-            trail.SetParent(this);
-            Velocity = new Vector2(RandomHelper.Range(-2f, 2f), -20);
+            this.onExplosion = onExplosion;
+
+            color = colors[RandomHelper.Range(colors.Length)];
+            lightColor = (byte)(color | Colors.INTENSITY);
+
+            Position = new Vector2(Drawing.BufferWidth * RandomHelper.Value, Drawing.BufferHeight);
+            trail = new Trail(0.5f, color);
+            trail.SetParent(this, false);
+            Velocity = new Vector2(RandomHelper.Range(-5f, 5f), -RandomHelper.Range(0.5f, 0.8f) * Drawing.BufferHeight);
 
             start = Time.Seconds;
-            this.lifetime = lifetime;
+            lifetime = RandomHelper.Range(1.5f, 2.2f);
         }
 
         public override void Draw()
         {
-            Drawing.BackgroundColor = Drawing.COLOR_LIGHT_BLUE;
+            Drawing.BackgroundColor = lightColor;
             Drawing.FillPoint(ApproxPosition, ' ');
         }
 
@@ -42,10 +55,24 @@ namespace Hangman.Graphics
 
             if (Time.Seconds - start > lifetime)
             {
-                var particle = new Particle
+                // Create explosion
+                for (int i = 0; i < 50; i++)
                 {
-                    Position = Position
-                };
+                    var particle = new Particle
+                    {
+                        Position = Position,
+                        color = RandomHelper.Value >= 0.3f ? lightColor : color,
+                    };
+                }
+
+                // Drop trail
+                trail.SetParent(null);
+                trail.SelfDestruct = true;
+                
+                try
+                {
+                    onExplosion?.Invoke();
+                } catch { /* Failed to play sound */ }
 
                 Destroy();
             }
@@ -54,19 +81,20 @@ namespace Hangman.Graphics
         public class Particle : Moving
         {
             public const float GRAVITY = 9.81f;
+            public byte color;
 
             public Particle() : base()
             {
-                var trail = new Trail(0.2, Drawing.COLOR_CYAN);
+                float lifetime = RandomHelper.Value;
 
-                trail.SetParent(this);
+                Velocity = Vector2.FromDegrees(RandomHelper.Range(360f), 2 + 8 * lifetime);
 
-                Destroy(RandomHelper.Range(3.5f, 5f));
+                Destroy(1 + lifetime * 1);
             }
 
             public override void Draw()
             {
-                Drawing.BackgroundColor = Drawing.COLOR_LIGHT_CYAN;
+                Drawing.BackgroundColor = color;
                 Drawing.FillPoint(ApproxPosition, ' ');
             }
 

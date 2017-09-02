@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Colors.cs" />
     <Compile Include="Drawing.cs" />
     <Compile Include="Objects\Drawable.cs" />
     <Compile Include="Objects\Moving.cs" />

@@ -109,21 +109,33 @@ namespace ConsoleDrawing.Structs
             return (float)Math.Sqrt(dx * dx + dy * dy);
         }
 
+        /// <summary>
+        /// Returns a <seealso cref="Vector2"/> that is made from the largest components of two vectors.
+        /// </summary>
         public static Vector2 Max(Vector2 vector1, Vector2 vector2)
         {
             return new Vector2(Math.Max(vector1.x, vector2.x), Math.Max(vector1.y, vector2.y));
         }
 
+        /// <summary>
+        /// Returns a <seealso cref="float"/> that is the largest of the two components in the vector.
+        /// </summary>
         public static float Max(Vector2 vector)
         {
             return Math.Max(vector.x, vector.y);
         }
 
+        /// <summary>
+        /// Returns a <seealso cref="Vector2"/> that is made from the smallest components of two vectors.
+        /// </summary>
         public static Vector2 Min(Vector2 vector1, Vector2 vector2)
         {
             return new Vector2(Math.Min(vector1.x, vector2.x), Math.Min(vector1.y, vector2.y));
         }
 
+        /// <summary>
+        /// Returns a <seealso cref="float"/> that is the smallest of the two components in the vector.
+        /// </summary>
         public static float Min(Vector2 vector)
         {
             return Math.Min(vector.x, vector.y);
@@ -132,6 +144,28 @@ namespace ConsoleDrawing.Structs
         public static Vector2 Scale(Vector2 vector1, Vector2 vector2)
         {
             return new Vector2(vector1.x * vector2.x, vector1.y * vector2.y);
+        }
+
+        public static Vector2 FromRadians(float rad)
+        {
+            return new Vector2((float)Math.Cos(rad), (float)Math.Sin(rad));
+        }
+
+        public static Vector2 FromRadians(float rad, float magnitude)
+        {
+            return new Vector2((float)Math.Cos(rad), (float)Math.Sin(rad)) * magnitude;
+        }
+
+        public static Vector2 FromDegrees(float deg)
+        {
+            float rad = (float)(deg * Math.PI / 180);
+            return FromRadians(rad);
+        }
+
+        public static Vector2 FromDegrees(float deg, float magnitude)
+        {
+            float rad = (float)(deg * Math.PI / 180);
+            return FromRadians(rad, magnitude);
         }
         #endregion
 

@@ -13,51 +13,47 @@ namespace ConsoleDrawing
     public static class Drawing
     {
         #region Constants
-        public const byte COLOR_BLACK = 0x00;
-        public const byte COLOR_INTENSITY = 0x88;
-        public const byte COLOR_RED = 0x44;
-        public const byte COLOR_GREEN = 0x22;
-        public const byte COLOR_BLUE = 0x11;
-        public const byte COLOR_YELLOW = COLOR_GREEN | COLOR_RED;
-        public const byte COLOR_MAGENTA = COLOR_BLUE | COLOR_RED;
-        public const byte COLOR_CYAN = COLOR_BLUE | COLOR_GREEN;
-        public const byte COLOR_GREY = COLOR_RED | COLOR_GREEN | COLOR_BLUE;
-
-        public const byte COLOR_LIGHT_RED = COLOR_RED | COLOR_INTENSITY;
-        public const byte COLOR_LIGHT_GREEN = COLOR_GREEN | COLOR_INTENSITY;
-        public const byte COLOR_LIGHT_BLUE = COLOR_BLUE | COLOR_INTENSITY;
-        public const byte COLOR_LIGHT_YELLOW = COLOR_YELLOW | COLOR_INTENSITY;
-        public const byte COLOR_LIGHT_MAGENTA = COLOR_MAGENTA | COLOR_INTENSITY;
-        public const byte COLOR_LIGHT_CYAN = COLOR_CYAN | COLOR_INTENSITY;
-        public const byte COLOR_WHITE = COLOR_GREY | COLOR_INTENSITY;
-
-        private const byte P_COLOR_FOREGROUND = 0x0F;
-        private const byte P_COLOR_BACKGROUND = 0xF0;
-        private const byte P_COLOR_DEFAULT = (COLOR_GREY & P_COLOR_FOREGROUND) | (COLOR_BLACK & P_COLOR_BACKGROUND);
+        private const string ERR_NOT_INITIALIZED = "The drawing library has not yet been initialized! Please refer to the " + nameof(Initialize) + " function";
         #endregion
 
         #region Private fields
-        private static SafeFileHandle fileHandler = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
+        private static SafeFileHandle fileHandler;
 
-        private static CharInfo[] buffer = CharInfo.NewBuffer(Console.WindowWidth, Console.WindowHeight);
-        private static int bufferSize = Console.WindowWidth * Console.WindowHeight;
-        private static SmallRect bufferRect = new SmallRect {
-            Left = 0, Top = 0, Width = (short)Console.WindowWidth, Height = (short)Console.WindowHeight
-        };
+        private static CharInfo[] buffer;
+        private static int bufferSize;
+        private static SmallRect bufferRect;
 
-        private static short bufferWidth = (short)Console.WindowHeight;
-        private static short bufferHeight = (short)Console.WindowWidth;
+        private static short bufferWidth;
+        private static short bufferHeight;
 
         private static int currentBufferIndex = 0;
-        private static byte currentAttribute = COLOR_GREY & P_COLOR_FOREGROUND;
+        private static byte currentAttribute = Colors.GREY & Colors.P_FOREGROUND;
         #endregion
 
-        #region Properties
-        public static int Width => bufferWidth;
-        public static int Height => bufferHeight;
+        public static void Initialize()
+        {
+            fileHandler = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
+            SetWindowSize(Console.WindowWidth, Console.WindowHeight);
+        }
 
+        #region Properties
+        /// <summary>
+        /// Gets the width of the drawing buffer
+        /// </summary>
+        public static int BufferWidth => bufferWidth;
+        /// <summary>
+        /// Gets the height of the drawing buffer
+        /// </summary>
+        public static int BufferHeight => bufferHeight;
+
+        /// <summary>
+        /// Gets or sets the cursors current visible state. Default is true
+        /// </summary>
         public static bool CursorVisible { get; set; } = true;
 
+        /// <summary>
+        /// Get or sets the current cursor position on the x-axis
+        /// </summary>
         public static int CursorX
         {
             get => currentBufferIndex % bufferWidth;
@@ -69,6 +65,9 @@ namespace ConsoleDrawing
             }
         }
 
+        /// <summary>
+        /// Gets or sets the current cursor position on the y-axis
+        /// </summary>
         public static int CursorY
         {
             get => currentBufferIndex / bufferWidth;
@@ -80,23 +79,38 @@ namespace ConsoleDrawing
             }
         }
 
+        /// <summary>
+        /// Gets or sets the current color attribute for foreground coloring.
+        /// </summary>
         public static byte ForegroundColor
         {
-            get => (byte)(currentAttribute & P_COLOR_FOREGROUND);
-            set { currentAttribute = (byte)((value & P_COLOR_FOREGROUND) | (currentAttribute & P_COLOR_BACKGROUND)); }
+            get => (byte)(currentAttribute & Colors.P_FOREGROUND);
+            set { currentAttribute = (byte)((value & Colors.P_FOREGROUND) | (currentAttribute & Colors.P_BACKGROUND)); }
         }
 
+        /// <summary>
+        /// Gets or sets the current color attribute for background coloring.
+        /// </summary>
         public static byte BackgroundColor
         {
-            get => (byte)(currentAttribute & P_COLOR_BACKGROUND);
-            set { currentAttribute = (byte)((value & P_COLOR_BACKGROUND) | (currentAttribute & P_COLOR_FOREGROUND)); }
+            get => (byte)(currentAttribute & Colors.P_BACKGROUND);
+            set { currentAttribute = (byte)((value & Colors.P_BACKGROUND) | (currentAttribute & Colors.P_FOREGROUND)); }
         }
         #endregion
 
         #region Drawing methods
 
+        /// <summary>
+        /// Writes a string of text at the curren cursor position, using the assigned color attribute.
+        /// Once at the end of the buffer width the cursor jumps to a new line.
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/>, <seealso cref="CursorX"/>, <seealso cref="CursorY"/></para>
+        /// </summary>
+        /// <param name="text">The string of text to be written.</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void WriteWrap(string text)
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             int length = text.Length;
 
             for (int b = currentBufferIndex, i = 0; b < bufferSize && i < length; b++, i++)
@@ -108,8 +122,28 @@ namespace ConsoleDrawing
             currentBufferIndex += length;
         }
 
+        /// <summary>
+        /// Writes a formatted string of text at the curren cursor position, using the assigned color attribute.
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/>, <seealso cref="CursorX"/>, <seealso cref="CursorY"/>, <seealso cref="string.Format"/></para>
+        /// </summary>
+        /// <param name="format">The string format to be used.</param>
+        /// <param name="args">The list of arguments for the string formatting</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
+        public static void Write(string format, params object[] args)
+        {
+            Write(string.Format(format, args));
+        }
+
+        /// <summary>
+        /// Writes a single character at the curren cursor position, using the assigned color attribute.
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/>, <seealso cref="CursorX"/>, <seealso cref="CursorY"/></para>
+        /// </summary>
+        /// <param name="text">The string of text to be written.</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void Write(string text)
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             int length = text.Length;
             for (int b = currentBufferIndex, i = 0; b < bufferSize && i < length; b++, i++)
             {
@@ -123,9 +157,17 @@ namespace ConsoleDrawing
                     break;
             }
         }
-
+        
+        /// <summary>
+        /// Writes a single character at the curren cursor position, using the assigned color attribute.
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/>, <seealso cref="CursorX"/>, <seealso cref="CursorY"/></para>
+        /// </summary>
+        /// <param name="letter">The ASCII/Unicode character to be written.</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void Write(char letter)
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             if (currentBufferIndex >= 0 && currentBufferIndex < bufferSize)
             {
                 buffer[currentBufferIndex].Char.UnicodeChar = letter;
@@ -134,21 +176,57 @@ namespace ConsoleDrawing
             currentBufferIndex++;
         }
 
+        /// <summary>
+        /// Writes a formatted string of text at the curren cursor position, using the assigned color attribute.
+        /// Once at the end of the buffer width the cursor jumps to a new line, similar to <see cref="WriteWrap"/>.
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/>, <seealso cref="CursorX"/>, <seealso cref="CursorY"/>, <seealso cref="string.Format"/></para>
+        /// </summary>
+        /// <param name="format">The string format to be used.</param>
+        /// <param name="args">The list of arguments for the string formatting</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
+        public static void WriteLine(string format, params object[] args)
+        {
+            WriteLine(string.Format(format, args));
+        }
+
+        /// <summary>
+        /// Writes a string of text at the curren cursor position, using the assigned color attribute.
+        /// Once at the end of the buffer width the cursor jumps to a new line, similar to <see cref="WriteWrap"/>.
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/>, <seealso cref="CursorX"/>, <seealso cref="CursorY"/></para>
+        /// </summary>
+        /// <param name="text">The string of text to be written.</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void WriteLine(string text)
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             WriteWrap(text);
             currentBufferIndex = (CursorY + 1) * bufferWidth;
         }
 
+        /// <summary>
+        /// Clears the entire drawing buffer.
+        /// <para>See also: <seealso cref="BackgroundColor"/>
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void Clear()
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             currentBufferIndex = 0;
 
             Fill(' ');
         }
 
+        /// <summary>
+        /// Clears the current horizontal line and resets the cursor to the start of the line.
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="CursorX"/>, <seealso cref="CursorY"/></para>
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void ClearLine()
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             int y = currentBufferIndex / bufferWidth;
             currentBufferIndex = y * bufferWidth;
 
@@ -159,23 +237,54 @@ namespace ConsoleDrawing
                 buffer[b].Char.UnicodeChar = ' ';
             }
         }
-
+        
+        /// <summary>
+        /// Fills in the entire drawing buffer using the assigned color attribute and the given <paramref name="letter"/>.
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/></para>
+        /// </summary>
+        /// <param name="letter">The ASCII/Unicode character to use while filling in</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void Fill(char letter)
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             for (int b = 0; b < bufferSize; b++)
             {
                 buffer[b].Attributes = currentAttribute;
                 buffer[b].Char.UnicodeChar = letter;
             }
         }
-
+        
+        /// <summary>
+        /// Fills in a rectangle using the assigned color attribute and the given <paramref name="letter"/>, 
+        /// marked at (<see cref="Rect"/> <paramref name="rect"/>).
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/></para>
+        /// </summary>
+        /// <param name="rect">The rectangle area to fill in</param>
+        /// <param name="letter">The ASCII/Unicode character to use while filling in</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void FillRect(Rect rect, char letter)
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             FillRect(rect.x, rect.y, rect.width, rect.height, letter);
         }
 
+        /// <summary>
+        /// Fills in a rectangle using the assigned color attribute and the given <paramref name="letter"/>, 
+        /// marked at (<paramref name="left"/>, <paramref name="top"/>, <paramref name="width"/>, <paramref name="height"/>).
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/></para>
+        /// </summary>
+        /// <param name="left">The position of the rectangle from the left edge</param>
+        /// <param name="top">The position of the rectangle from the top edge</param>
+        /// <param name="width">The width of the rectangle</param>
+        /// <param name="height">The height of the rectangle</param>
+        /// <param name="letter">The ASCII/Unicode character to use while filling in</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void FillRect(int left, int top, int width, int height, char letter)
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             int right = left + width;
             int bottom = top + height;
             for (int x = left; x < right; x++)
@@ -187,13 +296,34 @@ namespace ConsoleDrawing
             }
         }
 
+        /// <summary>
+        /// Fills in a character on a single point using the assigned color attribute and the given <paramref name="letter"/>, 
+        /// marked at (<see cref="Point"/> <paramref name="point"/>).
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/></para>
+        /// </summary>
+        /// <param name="point">The 2D position of the point</param>
+        /// <param name="letter">The ASCII/Unicode character to use while filling in</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void FillPoint(Point point, char letter)
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             FillPoint(point.x, point.y, letter);
         }
 
+        /// <summary>
+        /// Fills in a character on a single point using the assigned color attribute and the given <paramref name="letter"/>, 
+        /// marked at (<paramref name="x"/>, <paramref name="y"/>).
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/></para>
+        /// </summary>
+        /// <param name="x">The x component of the point</param>
+        /// <param name="y">The y component of the point</param>
+        /// <param name="letter">The ASCII/Unicode character to use while filling in</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void FillPoint(int x, int y, char letter)
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             if (x < 0 || x >= bufferWidth || y < 0 || y >= bufferHeight)
                 return;
 
@@ -205,13 +335,37 @@ namespace ConsoleDrawing
             }
         }
 
+        /// <summary>
+        /// Draws a line between two points using the assigned color attribute and the given <paramref name="letter"/>, 
+        /// marked between (<see cref="Point"/> <paramref name="point1"/>) and (<see cref="Point"/> <paramref name="point2"/>).
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/></para>
+        /// </summary>
+        /// <param name="point1">The 2D position of the first point</param>
+        /// <param name="point2">The 2D position of the second point</param>
+        /// <param name="letter">The ASCII/Unicode character to use while filling in</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void FillLine(Point point1, Point point2, char letter)
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             FillLine(point1.x, point1.y, point2.x, point2.y, letter);
         }
 
+        /// <summary>
+        /// Draws a line between two points using the assigned color attribute and the given <paramref name="letter"/>, 
+        /// marked between (<paramref name="x1"/>, <paramref name="y1"/>) and (<paramref name="x2"/>, <paramref name="y2"/>).
+        /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/></para>
+        /// </summary>
+        /// <param name="x1">The x component of the first point</param>
+        /// <param name="y1">The y component of the first point</param>
+        /// <param name="x2">The x component of the second point</param>
+        /// <param name="y2">The y component of the second point</param>
+        /// <param name="letter">The ASCII/Unicode character to use while filling in</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void FillLine(int x1, int y1, int x2, int y2, char letter)
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             // Generalized Bresenham's Line Drawing Algorithm
             int x = x1;
             int y = y1;
@@ -245,8 +399,14 @@ namespace ConsoleDrawing
             }
         }
 
+        /// <summary>
+        /// Renders the drawing buffer onto the console window.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void Render()
         {
+            if (buffer == null || fileHandler == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             try
             {
                 Console.SetBufferSize(
@@ -275,7 +435,21 @@ namespace ConsoleDrawing
         #endregion
 
         #region Setters methods
+        /// <summary>
+        /// Change the window size of the drawing buffer to equal the <see cref="Console.WindowWidth"/> and <see cref="Console.WindowHeight"/>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
+        public static void SetWindowSize()
+        {
+            SetWindowSize(Console.WindowWidth, Console.WindowHeight);
+        }
 
+        /// <summary>
+        /// Change the window size of the drawing buffer.
+        /// </summary>
+        /// <param name="width">The new <paramref name="width"/> of the buffer</param>
+        /// <param name="height">The new <paramref name="height"/> of the buffer</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void SetWindowSize(int width, int height)
         {
             short oldWidth = bufferWidth;
@@ -286,47 +460,69 @@ namespace ConsoleDrawing
             bufferWidth = (short)width;
             bufferHeight = (short)height;
             bufferSize = bufferWidth * bufferHeight;
-            buffer = new CharInfo[bufferSize];
+            buffer = CharInfo.NewBuffer(width, height);
             bufferRect = new SmallRect { Left = 0, Top = 0, Width = bufferWidth, Height = bufferHeight };
 
             // Copy old buffer
-            var defaultChar = CharInfo.NewUnicodeChar(' ');
-
-            for (int b = 0; b < bufferSize; b++)
+            if (oldBuffer != null)
             {
-                int x = b % bufferWidth;
-                int y = b / bufferWidth;
+                if (oldSize > bufferSize) oldSize = bufferSize;
 
-                if (x < oldWidth && y < oldHeight)
+                for (int b = 0; b < oldSize; b++)
                 {
-                    int i = y * oldWidth + x;
-                    buffer[b] = oldBuffer[i];
-                }
-                else
-                    buffer[b] = defaultChar;
-            }
+                    int x = b % bufferWidth;
+                    int y = b / bufferWidth;
 
+                    if (x < oldWidth && y < oldHeight)
+                    {
+                        int i = y * oldWidth + x;
+                        buffer[b] = oldBuffer[i];
+                    }
+                }
+            }
         }
 
+        /// <summary>
+        /// Sets the cursor position on the buffer window.
+        /// </summary>
+        /// <param name="point">The 2D position</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void SetCursorPosition(Point point)
         {
             SetCursorPosition(point.x, point.y);
         }
 
+        /// <summary>
+        /// Sets the cursor position on the buffer window.
+        /// </summary>
+        /// <param name="x">The <paramref name="x"/> position</param>
+        /// <param name="y">The <paramref name="y"/> position</param>
+        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void SetCursorPosition(int x, int y)
         {
+            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+
             int index = y * bufferWidth + x;
             currentBufferIndex = index;
         }
 
+        /// <summary>
+        /// Sets the color attribute to be used on following drawings. This sets both foreground and background color at the same time.
+        /// <para>See: <see cref="Colors"/></para>
+        /// </summary>
+        /// <param name="attribute">The raw <seealso cref="byte"/> attribute.</param>
         public static void SetColorAttribute(byte attribute)
         {
             currentAttribute = attribute;
         }
 
+        /// <summary>
+        /// Resets the color attribute to be used on following drawing to default color, 
+        /// <seealso cref="Colors.GREY"/> for foreground and <seealso cref="Colors.BLACK"/> for background.
+        /// </summary>
         public static void ResetColorAttribute()
         {
-            currentAttribute = P_COLOR_DEFAULT;
+            currentAttribute = Colors.P_DEFAULT;
         }
         #endregion
 
@@ -380,7 +576,7 @@ namespace ConsoleDrawing
             [FieldOffset(0)] public CharUnion Char;
             [FieldOffset(2)] public short Attributes;
 
-            public static CharInfo NewAsciiChar(byte ascii, short attributes = P_COLOR_DEFAULT)
+            public static CharInfo NewAsciiChar(byte ascii, short attributes = Colors.P_DEFAULT)
             {
                 var info = new CharInfo();
                 info.Char.AsciiChar = ascii;
@@ -388,7 +584,7 @@ namespace ConsoleDrawing
                 return info;
             }
 
-            public static CharInfo NewUnicodeChar(char unicode, short attributes = P_COLOR_DEFAULT)
+            public static CharInfo NewUnicodeChar(char unicode, short attributes = Colors.P_DEFAULT)
             {
                 var info = new CharInfo();
                 info.Char.UnicodeChar = unicode;

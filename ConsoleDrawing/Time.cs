@@ -23,6 +23,8 @@ namespace ConsoleDrawing
         public static event FrameEvent OnEventUpdate;
         public static event FrameEvent OnEventDraw;
 
+        private static object locker = new object();
+
         public static float FramesPerSecond
         {
             get => framesPerSecond;
@@ -45,24 +47,30 @@ namespace ConsoleDrawing
 
         static void FrameCallback(object state, bool timedOut)
         {
-            long now = stopwatch?.ElapsedMilliseconds ?? 0;
-            deltaMilliseconds = now - lastFrameTime;
-            deltaTime = deltaMilliseconds * 0.001f;
-            
-            // Fix size
-            if (Console.WindowWidth != Drawing.Width || Console.WindowHeight != Drawing.Height)
-                Drawing.SetWindowSize(Console.WindowWidth, Console.WindowHeight);
+            lock (locker)
+            {
+                long now = stopwatch?.ElapsedMilliseconds ?? 0;
+                deltaMilliseconds = now - lastFrameTime;
+                deltaTime = deltaMilliseconds * 0.001f;
 
-            // Update
-            OnEventUpdate?.Invoke();
+                // Fix size
+                if (Console.WindowWidth != Drawing.BufferWidth || Console.WindowHeight != Drawing.BufferHeight)
+                    Drawing.SetWindowSize(Console.WindowWidth, Console.WindowHeight);
 
-            // Draw
-            Drawing.ResetColorAttribute();
-            Drawing.Clear();
-            OnEventDraw?.Invoke();
-            Drawing.Render();
+                // Update
+                OnEventUpdate?.Invoke();
 
-            lastFrameTime = now;
+                // Draw
+                Drawing.ResetColorAttribute();
+                Drawing.Clear();
+                OnEventDraw?.Invoke();
+                Drawing.Render();
+
+                // Garbage collect
+                Objects.Drawable.all?.RemoveAll(p => p?.Destroyed ?? true);
+
+                lastFrameTime = now;
+            }
         }
 
         /// <summary>

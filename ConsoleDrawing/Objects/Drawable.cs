@@ -10,7 +10,7 @@ namespace ConsoleDrawing.Objects
 {
     public abstract class Drawable
     {
-        public static readonly HashSet<Drawable> all = new HashSet<Drawable>();
+        internal static readonly List<Drawable> all = new List<Drawable>();
 
         private bool m_Initiated = false;
         private bool m_Destroyed = false;
@@ -47,14 +47,27 @@ namespace ConsoleDrawing.Objects
         /// <summary>
         /// Local position of this object.
         /// </summary>
-        public Vector2 localPosition;
-        
+        public Vector2 localPosition = Vector2.Zero;
+
         /// <summary>
         /// Position relative to this objects parent (if any)
         /// </summary>
         public Vector2 Position {
             get => Parent == null ? localPosition : (Parent.Position + localPosition);
             set => localPosition = Parent == null ? value : (value - Parent.Position);
+        }
+
+        /// <summary>
+        /// Local z-depth of this object.
+        /// </summary>
+        public int localZDepth = 0;
+
+        /// <summary>
+        /// Z-depth relative to this objects parent (if any)
+        /// </summary>
+        public int ZDepth {
+            get => Parent == null ? localZDepth : (Parent.ZDepth + localZDepth);
+            set => localZDepth = Parent == null ? value : (value - Parent.ZDepth);
         }
         
         /// <summary>
@@ -83,6 +96,7 @@ namespace ConsoleDrawing.Objects
             if (m_Destroyed) return;
 
             Vector2 oldPos = Position;
+            int oldZ = ZDepth;
             
             // Remove from old parent
             m_Parent?.children.Remove(this);
@@ -90,9 +104,12 @@ namespace ConsoleDrawing.Objects
             // Add to new parent
             parent?.children.Add(this);
 
+            m_Parent = parent;
+
             if (worldPositionStays)
             {
                 Position = oldPos;
+                ZDepth = oldZ;
             }
         }
 
@@ -144,9 +161,6 @@ namespace ConsoleDrawing.Objects
             }
 
             SetParent(null);
-
-            if (m_Initiated)
-                all.Remove(this);
         }
 
         /// <summary>
