@@ -172,5 +172,26 @@ namespace ConsoleDrawing.Objects
             await Task.Delay((int)(delay * 1000));
             Destroy();
         }
+
+        public static T FindObjectOfType<T> () where T : Drawable
+        {
+            return all.First(d => d is T) as T;
+        }
+
+        public static T[] FindObjectsOfType<T> () where T : Drawable
+        {
+            return all.Select(d => d is T) as T[];
+        }
+
+        public bool IsChildOf(Drawable parent)
+        {
+            if (Parent == null) return false;
+            if (parent == null) return false;
+
+            if (parent == this) return true;
+            if (Parent == parent) return true;
+
+            return Parent.IsChildOf(parent);
+        }
     }
 }

@@ -13,6 +13,43 @@ namespace Tmp
 {
     class Program
     {
+        const string HANGMAN =
+              "                   ,,,,,,,,,,,\n"
+            + "                   ,,,,,,,,,,,\n"
+            + "                    ,,,,,,,,,,\n"
+            + "  +@@@@@@@@@@        ,,,,,,,,,\n"
+            + "  +    '#   |           ,,,,,,\n"
+            + "  +  '#     |               ,,\n"
+            + "  +'#       |                 \n"
+            + "  +         |                 \n"
+            + "  +  @'+ ;@; ## '@            \n"
+            + "  +    +........@ ;           \n"
+            + "  ++  ;. +...+...+ #          \n"
+            + "  ++  #....;.....@ +          \n"
+            + "  +;   ..........  +          \n"
+            + "  +     @.'.,..#   +          \n"
+            + "  + ;      '                  \n"
+            + "  +        @                  \n"
+            + "  +       @' @                \n"
+            + "  +      + '  ;               \n"
+            + "  +     ;  '    @             \n"
+            + "  +   ;    '     ;            \n"
+            + "  +        '                  \n"
+            + "  +        '                  \n"
+            + "  +        '                  \n"
+            + "  +        '                  \n"
+            + "  +        ;'                 \n"
+            + "  +       # '                 \n"
+            + "  +      #   +                \n"
+            + "  +     ;    '                \n"
+            + "  +     ;     #    ,,,, ,,,,,.\n"
+            + "  +    @          ;     ,..,. \n"
+            + "  +                         , \n"
+            + "  @@       ;;'''' ,. .  `.,.,'\n"
+            + " @; @'''''''''''''''''''''''''\n"
+            + "+''''@''''''''''''''''''''''''";
+
+
         const string LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
 
         static void Main(string[] args)
@@ -24,14 +61,20 @@ namespace Tmp
         static void Fireworks(string[] args)
         {
             Console.Title = "Kalles fyverkerier!";
-            Console.SetWindowSize(Console.WindowWidth, Console.WindowHeight);
+            Console.SetWindowSize(Console.WindowWidth, 34);
 
+            Drawing.ForceSize = true;
             Drawing.CursorVisible = false;
             Drawing.Initialize();
             Time.StartFrameTimer();
 
             PlayFireworkLaunchSound();
             new Firework(PlayFireworkExplosionSound);
+
+            new Text
+            {
+                text = HANGMAN,
+            };
 
             while (true)
             {

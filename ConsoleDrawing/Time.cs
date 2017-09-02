@@ -55,7 +55,7 @@ namespace ConsoleDrawing
 
                 // Fix size
                 if (Console.WindowWidth != Drawing.BufferWidth || Console.WindowHeight != Drawing.BufferHeight)
-                    Drawing.SetWindowSize(Console.WindowWidth, Console.WindowHeight);
+                    Drawing.SetWindowSize(Console.WindowWidth, Drawing.BufferHeight);
 
                 // Update
                 OnEventUpdate?.Invoke();

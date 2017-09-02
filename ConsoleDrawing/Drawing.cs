@@ -52,6 +52,11 @@ namespace ConsoleDrawing
         public static bool CursorVisible { get; set; } = true;
 
         /// <summary>
+        /// Gets or sets the setting wether or not the renderer shall force the windows size to be the same as the buffer size.
+        /// </summary>
+        public static bool ForceSize { get; set; } = false;
+
+        /// <summary>
         /// Get or sets the current cursor position on the x-axis
         /// </summary>
         public static int CursorX
@@ -409,6 +414,11 @@ namespace ConsoleDrawing
 
             try
             {
+                if (ForceSize)
+                {
+                    Console.SetWindowSize(bufferWidth, bufferHeight);
+                }
+
                 Console.SetBufferSize(
                     Math.Max(Console.WindowWidth, bufferWidth),
                     Math.Max(Console.WindowHeight, bufferHeight));
