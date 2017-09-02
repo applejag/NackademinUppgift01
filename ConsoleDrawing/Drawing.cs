@@ -13,7 +13,7 @@ namespace ConsoleDrawing
     public static class Drawing
     {
         #region Constants
-        private const string ERR_NOT_INITIALIZED = "The drawing library has not yet been initialized! Please refer to the " + nameof(Initialize) + " function";
+        private const string ERR_NOT_INITIALIZED = "The drawing library has not yet been initialized! Please refer to the " + nameof(SetWindowSize) + " function";
         #endregion
 
         #region Private fields
@@ -21,7 +21,7 @@ namespace ConsoleDrawing
 
         private static CharInfo[] buffer;
         private static int bufferSize;
-        private static SmallRect bufferRect;
+        internal static SmallRect bufferRect;
 
         private static short bufferWidth;
         private static short bufferHeight;
@@ -29,12 +29,6 @@ namespace ConsoleDrawing
         private static int currentBufferIndex = 0;
         private static byte currentAttribute = Colors.GREY & Colors.P_FOREGROUND;
         #endregion
-
-        public static void Initialize()
-        {
-            fileHandler = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
-            SetWindowSize(Console.WindowWidth, Console.WindowHeight);
-        }
 
         #region Properties
         /// <summary>
@@ -54,7 +48,7 @@ namespace ConsoleDrawing
         /// <summary>
         /// Gets or sets the setting wether or not the renderer shall force the windows size to be the same as the buffer size.
         /// </summary>
-        public static bool ForceSize { get; set; } = false;
+        public static bool FixedSize { get; set; } = false;
 
         /// <summary>
         /// Get or sets the current cursor position on the x-axis
@@ -414,10 +408,13 @@ namespace ConsoleDrawing
 
             try
             {
-                if (ForceSize)
+                if (FixedSize)
                 {
                     Console.SetWindowSize(bufferWidth, bufferHeight);
                 }
+
+                bufferRect.Width = bufferWidth;
+                bufferRect.Height = bufferHeight;
 
                 Console.SetBufferSize(
                     Math.Max(Console.WindowWidth, bufferWidth),
@@ -462,6 +459,9 @@ namespace ConsoleDrawing
         /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void SetWindowSize(int width, int height)
         {
+            fileHandler?.Dispose();
+            fileHandler = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
+
             short oldWidth = bufferWidth;
             short oldHeight = bufferHeight;
             int oldSize = bufferSize;
@@ -620,7 +620,7 @@ namespace ConsoleDrawing
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct SmallRect
+        internal struct SmallRect
         {
             public short Left;
             public short Top;

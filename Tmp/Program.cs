@@ -49,6 +49,14 @@ namespace Tmp
             + " @; @'''''''''''''''''''''''''\n"
             + "+''''@''''''''''''''''''''''''";
 
+        const string YOULOST =
+              "██╗   ██╗ ██████╗ ██╗   ██╗    ██╗      ██████╗ ███████╗████████╗\n"
+            + "╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║     ██╔═══██╗██╔════╝╚══██╔══╝\n"
+            + " ╚████╔╝ ██║   ██║██║   ██║    ██║     ██║   ██║███████╗   ██║   \n"
+            + "  ╚██╔╝  ██║   ██║██║   ██║    ██║     ██║   ██║╚════██║   ██║   \n"
+            + "   ██║   ╚██████╔╝╚██████╔╝    ███████╗╚██████╔╝███████║   ██║   \n"
+            + "   ╚═╝    ╚═════╝  ╚═════╝     ╚══════╝ ╚═════╝ ╚══════╝   ╚═╝   ";
+
 
         const string LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
 
@@ -62,10 +70,10 @@ namespace Tmp
         {
             Console.Title = "Kalles fyverkerier!";
             Console.SetWindowSize(Console.WindowWidth, 34);
+            Drawing.SetWindowSize();
 
-            Drawing.ForceSize = true;
+            Drawing.FixedSize = true;
             Drawing.CursorVisible = false;
-            Drawing.Initialize();
             Time.StartFrameTimer();
 
             PlayFireworkLaunchSound();
@@ -74,6 +82,13 @@ namespace Tmp
             new Text
             {
                 text = HANGMAN,
+            };
+
+            new FlashingText
+            {
+                text = YOULOST,
+                foregrounds = new byte[] { Colors.LIGHT_RED, Colors.GREY },
+                Position = new Vector2(30, 10),
             };
 
             while (true)

@@ -54,8 +54,11 @@ namespace ConsoleDrawing
                 deltaTime = deltaMilliseconds * 0.001f;
 
                 // Fix size
-                if (Console.WindowWidth != Drawing.BufferWidth || Console.WindowHeight != Drawing.BufferHeight)
-                    Drawing.SetWindowSize(Console.WindowWidth, Drawing.BufferHeight);
+                if (Drawing.FixedSize == false)
+                {
+                    if (Console.WindowWidth != Drawing.BufferWidth || Console.WindowHeight != Drawing.BufferHeight)
+                        Drawing.SetWindowSize(Console.WindowWidth, Drawing.BufferHeight);
+                }
 
                 // Update
                 OnEventUpdate?.Invoke();
@@ -64,6 +67,7 @@ namespace ConsoleDrawing
                 Drawing.ResetColorAttribute();
                 Drawing.Clear();
                 OnEventDraw?.Invoke();
+
                 Drawing.Render();
 
                 // Garbage collect
