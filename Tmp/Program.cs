@@ -13,41 +13,6 @@ namespace Tmp
 {
     class Program
     {
-        const string HANGMAN =
-              "                   ,,,,,,,,,,,\n"
-            + "                   ,,,,,,,,,,,\n"
-            + "                    ,,,,,,,,,,\n"
-            + "  +@@@@@@@@@@        ,,,,,,,,,\n"
-            + "  +    '#   |           ,,,,,,\n"
-            + "  +  '#     |               ,,\n"
-            + "  +'#       |                 \n"
-            + "  +         |                 \n"
-            + "  +  @'+ ;@; ## '@            \n"
-            + "  +    +........@ ;           \n"
-            + "  ++  ;. +...+...+ #          \n"
-            + "  ++  #....;.....@ +          \n"
-            + "  +;   ..........  +          \n"
-            + "  +     @.'.,..#   +          \n"
-            + "  + ;      '                  \n"
-            + "  +        @                  \n"
-            + "  +       @' @                \n"
-            + "  +      + '  ;               \n"
-            + "  +     ;  '    @             \n"
-            + "  +   ;    '     ;            \n"
-            + "  +        '                  \n"
-            + "  +        '                  \n"
-            + "  +        '                  \n"
-            + "  +        '                  \n"
-            + "  +        ;'                 \n"
-            + "  +       # '                 \n"
-            + "  +      #   +                \n"
-            + "  +     ;    '                \n"
-            + "  +     ;     #    ,,,, ,,,,,.\n"
-            + "  +    @          ;     ,..,. \n"
-            + "  +                         , \n"
-            + "  @@       ;;'''' ,. .  `.,.,'\n"
-            + " @; @'''''''''''''''''''''''''\n"
-            + "+''''@''''''''''''''''''''''''";
 
         const string YOULOST =
               "██╗   ██╗ ██████╗ ██╗   ██╗    ██╗      ██████╗ ███████╗████████╗\n"
@@ -72,20 +37,18 @@ namespace Tmp
             Console.SetWindowSize(100, 34);
             Drawing.SetWindowSize();
 
-            Drawing.FixedSize = true;
+            //Drawing.FixedSize = true;
             Drawing.CursorVisible = false;
 
             PlayFireworkLaunchSound();
             new Firework(PlayFireworkExplosionSound);
 
-            new Text { text = HANGMAN };
-
-            var flashingText = new FlashingText
-            {
-                text = YOULOST,
-                foregrounds = new byte[] {Colors.LIGHT_RED, Colors.GREY},
-                Position = new Vector2(30, 10)
-            };
+            //var flashingText = new FlashingText
+            //{
+            //    text = YOULOST,
+            //    foregrounds = new Color[] {Color.LIGHT_RED, Color.GREY},
+            //    Position = new Vector2(30, 10)
+            //};
 
             void FireworkOnSpace()
             {
@@ -100,7 +63,41 @@ namespace Tmp
             {
                 OnUpdate = FireworkOnSpace,
             };
-            
+
+            string[] animation = AnimatedText.LoadFromFile("Animations/Poledancer.txt");
+
+            new AnimatedText
+            {
+                frames = animation,
+                interval = 1,
+                Position = new Vector2(Drawing.BufferWidth - 25, Drawing.BufferHeight - 7),
+            };
+
+            new AnimatedText
+            {
+                frames = animation,
+                interval = 1.2f,
+                Position = new Vector2(Drawing.BufferWidth - 25*2, Drawing.BufferHeight - 7),
+            };
+
+            new AnimatedText
+            {
+                frames = animation,
+                interval = 0.8f,
+                Position = new Vector2(Drawing.BufferWidth - 25 * 3, Drawing.BufferHeight - 7),
+            };
+
+            new AnimatedText
+            {
+                frames = AnimatedText.LoadFromFile("Animations/YouWon.txt"),
+                interval = 0.8f,
+                Position = new Vector2((Drawing.BufferWidth - 72) * 0.5f, (Drawing.BufferHeight - 10) * 0.5f),
+                foregroundColor = Color.LIGHT_GREEN,
+            };
+
+            new Rainbow();
+            new Airplane();
+
             Time.RunFrameTimer();
         }
 

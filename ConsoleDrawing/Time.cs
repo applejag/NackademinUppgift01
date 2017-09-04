@@ -18,8 +18,6 @@ namespace ConsoleDrawing
         private static long lastFrameTime = 0;
 
         public delegate void FrameEvent();
-        public static event FrameEvent OnEventUpdate;
-        public static event FrameEvent OnEventDraw;
 
         /// <summary>
         /// Get or set the target amount of time between each frame.
@@ -75,22 +73,30 @@ namespace ConsoleDrawing
                         Drawing.SetWindowSize(Console.WindowWidth, Drawing.BufferHeight);
                 }
 
-                // Update
-                Input.AnalyzeInput();
-                OnEventUpdate?.Invoke();
-
-                // Draw
-                Drawing.ResetColorAttribute();
-                Drawing.Clear();
-
-                OnEventDraw?.Invoke();
-
-                Drawing.Render();
-
-                // GC
                 lock (Drawable.all)
                 {
-                    Drawable.all?.RemoveAll(d => d == null || d.Destroyed);
+                    // Update
+                    Input.AnalyzeInput();
+                    for (int i = Drawable.all.Count - 1; i >= 0; i--)
+                    {
+                        // GC & Update each one
+                        Drawable drawable = Drawable.all[i];
+                        if (drawable?.Destroyed ?? true)
+                            Drawable.all.RemoveAt(i);
+                        else if (drawable.Enabled)
+                            drawable.Update();
+                    }
+
+                    // Draw
+                    Drawing.ResetColor();
+                    Drawing.Clear();
+
+                    Drawable.all.Sort((a, b) => b.ZDepth.CompareTo(a.ZDepth));
+                    foreach (Drawable drawable in Drawable.all)
+                        if (drawable?.Enabled ?? false)
+                            drawable.Draw();
+
+                    Drawing.Render();
                 }
             }
         }

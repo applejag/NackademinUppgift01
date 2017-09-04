@@ -6,28 +6,28 @@ using System.Threading.Tasks;
 
 namespace ConsoleDrawing
 {
-    public static class Colors
+    [Flags]
+    public enum Color : short
     {
-        public const byte BLACK = 0x00;
-        public const byte INTENSITY = 0x88;
-        public const byte RED = 0x44;
-        public const byte GREEN = 0x22;
-        public const byte BLUE = 0x11;
-        public const byte YELLOW = GREEN | RED;
-        public const byte MAGENTA = BLUE | RED;
-        public const byte CYAN = BLUE | GREEN;
-        public const byte GREY = RED | GREEN | BLUE;
+        BLACK = 0x00,
+        INTENSITY = 0x88,
+        RED = 0x44,
+        GREEN = 0x22,
+        BLUE = 0x11,
+        YELLOW = GREEN | RED,
+        MAGENTA = BLUE | RED,
+        CYAN = BLUE | GREEN,
+        GREY = RED | GREEN | BLUE,
 
-        public const byte LIGHT_RED = RED | INTENSITY;
-        public const byte LIGHT_GREEN = GREEN | INTENSITY;
-        public const byte LIGHT_BLUE = BLUE | INTENSITY;
-        public const byte LIGHT_YELLOW = YELLOW | INTENSITY;
-        public const byte LIGHT_MAGENTA = MAGENTA | INTENSITY;
-        public const byte LIGHT_CYAN = CYAN | INTENSITY;
-        public const byte WHITE = GREY | INTENSITY;
+        LIGHT_RED = RED | INTENSITY,
+        LIGHT_GREEN = GREEN | INTENSITY,
+        LIGHT_BLUE = BLUE | INTENSITY,
+        LIGHT_YELLOW = YELLOW | INTENSITY,
+        LIGHT_MAGENTA = MAGENTA | INTENSITY,
+        LIGHT_CYAN = CYAN | INTENSITY,
+        WHITE = GREY | INTENSITY,
 
-        public const byte P_FOREGROUND = 0x0F;
-        public const byte P_BACKGROUND = 0xF0;
-        public const byte P_DEFAULT = (GREY & P_FOREGROUND) | (BLACK & P_BACKGROUND);
+        DEFAULT_BACKGROUND = BLACK,
+        DEFAULT_FOREGROUND = GREY,
     }
 }

@@ -13,15 +13,15 @@ namespace Hangman.Graphics
 {
     public class Firework : Moving
     {
-        public static readonly byte[] colors = { Colors.CYAN, Colors.GREEN, Colors.RED, Colors.YELLOW };
+        public static readonly Color[] colors = { Color.CYAN, Color.GREEN, Color.RED, Color.YELLOW };
 
         public const float GRAVITY = 9.81f;
         protected Trail trail;
         protected float start;
         protected float lifetime;
 
-        byte color;
-        byte lightColor;
+        Color color;
+        Color lightColor;
 
         Action onExplosion;
 
@@ -30,9 +30,9 @@ namespace Hangman.Graphics
             this.onExplosion = onExplosion;
 
             color = colors[RandomHelper.Range(colors.Length)];
-            lightColor = (byte)(color | Colors.INTENSITY);
+            lightColor = color | Color.INTENSITY;
 
-            Position = new Vector2(Drawing.BufferWidth * RandomHelper.Float, Drawing.BufferHeight);
+            Position = new Vector2(Drawing.BufferWidth * RandomHelper.Range(0.2f, 0.8f), Drawing.BufferHeight);
             trail = new Trail(0.5f, color);
             trail.SetParent(this, false);
             Velocity = new Vector2(RandomHelper.Range(-5f, 5f), -RandomHelper.Range(0.5f, 0.8f) * Drawing.BufferHeight);
@@ -81,7 +81,7 @@ namespace Hangman.Graphics
         public class Particle : Moving
         {
             public const float GRAVITY = 9.81f;
-            public byte color;
+            public Color color;
 
             private bool isForeground;
 
@@ -93,20 +93,21 @@ namespace Hangman.Graphics
 
                 Destroy(1 + lifetime * 1);
 
-                isForeground = RandomHelper.Boolean;
+                isForeground = RandomHelper.Float > 0.5f;
             }
 
             public override void Draw()
             {
                 if (isForeground)
                 {
-                    Drawing.BackgroundColor = Colors.BLACK;
+                    Drawing.BackgroundColor = null;
                     Drawing.ForegroundColor = color;
                     Drawing.FillPoint(ApproxPosition, '*');
                 }
                 else
                 {
                     Drawing.BackgroundColor = color;
+                    Drawing.ForegroundColor = null;
                     Drawing.FillPoint(ApproxPosition, ' ');
                 }
             }

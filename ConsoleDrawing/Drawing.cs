@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,8 @@ namespace ConsoleDrawing
         private static short bufferHeight;
 
         private static int currentBufferIndex = 0;
-        private static byte currentAttribute = Colors.GREY & Colors.P_FOREGROUND;
+        private static Color? currentFGColor = Color.DEFAULT_FOREGROUND;
+        private static Color? currentBGColor = Color.DEFAULT_BACKGROUND;
         #endregion
 
         #region Properties
@@ -81,19 +83,19 @@ namespace ConsoleDrawing
         /// <summary>
         /// Gets or sets the current color attribute for foreground coloring.
         /// </summary>
-        public static byte ForegroundColor
+        public static Color? ForegroundColor
         {
-            get => (byte)(currentAttribute & Colors.P_FOREGROUND);
-            set { currentAttribute = (byte)((value & Colors.P_FOREGROUND) | (currentAttribute & Colors.P_BACKGROUND)); }
+            get => currentFGColor;
+            set => currentFGColor = value;
         }
 
         /// <summary>
         /// Gets or sets the current color attribute for background coloring.
         /// </summary>
-        public static byte BackgroundColor
+        public static Color? BackgroundColor
         {
-            get => (byte)(currentAttribute & Colors.P_BACKGROUND);
-            set { currentAttribute = (byte)((value & Colors.P_BACKGROUND) | (currentAttribute & Colors.P_FOREGROUND)); }
+            get => currentBGColor;
+            set => currentBGColor = value;
         }
         #endregion
 
@@ -114,8 +116,7 @@ namespace ConsoleDrawing
 
             for (int b = currentBufferIndex, i = 0; b < bufferSize && i < length; b++, i++)
             {
-                buffer[b].Attributes = currentAttribute;
-                buffer[b].Char.UnicodeChar = text[i];
+                FillBufferPoint(b, text[i]);
             }
 
             currentBufferIndex += length;
@@ -148,8 +149,7 @@ namespace ConsoleDrawing
             {
                 currentBufferIndex++;
 
-                buffer[b].Attributes = currentAttribute;
-                buffer[b].Char.UnicodeChar = text[i];
+                FillBufferPoint(b, text[i]);
 
                 int x = b % bufferWidth;
                 if (x == bufferWidth - 1)
@@ -169,8 +169,7 @@ namespace ConsoleDrawing
 
             if (currentBufferIndex >= 0 && currentBufferIndex < bufferSize)
             {
-                buffer[currentBufferIndex].Char.UnicodeChar = letter;
-                buffer[currentBufferIndex].Attributes = currentAttribute;
+                FillBufferPoint(currentBufferIndex, letter);
             }
             currentBufferIndex++;
         }
@@ -232,8 +231,7 @@ namespace ConsoleDrawing
             int stopAt = Math.Min(currentBufferIndex + bufferWidth, bufferSize);
             for (int b = currentBufferIndex; b < stopAt; b++)
             {
-                buffer[b].Attributes = currentAttribute;
-                buffer[b].Char.UnicodeChar = ' ';
+                FillBufferPoint(b, ' ');
             }
         }
         
@@ -249,8 +247,7 @@ namespace ConsoleDrawing
 
             for (int b = 0; b < bufferSize; b++)
             {
-                buffer[b].Attributes = currentAttribute;
-                buffer[b].Char.UnicodeChar = letter;
+                FillBufferPoint(b, letter);
             }
         }
         
@@ -296,6 +293,41 @@ namespace ConsoleDrawing
         }
 
         /// <summary>
+        /// Set color and character for a point in the buffer directly.
+        /// <para>See: <see cref="buffer"/></para>
+        /// </summary>
+        /// <param name="index">The index on the buffer array</param>
+        /// <param name="letter">The ASCII/Unicode character to use while filling in.</param>
+        /// <exception cref="IndexOutOfRangeException">Thrown if <paramref name="index"/> is outside the <see cref="buffer"/> array.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void FillBufferPoint(int index, char letter)
+        {
+            buffer[index].Attributes = GetFillColorForPoint(index);
+            if (currentFGColor.HasValue)
+                buffer[index].Char.UnicodeChar = letter;
+        }
+
+        /// <summary>
+        /// Returns a combination of <see cref="currentFGColor"/>, <see cref="currentBGColor"/> and the current color at the said index.
+        /// </summary>
+        /// <param name="index">The index of the buffer array</param>
+        internal static short GetFillColorForPoint(int index)
+        {
+            short value = buffer[index].Attributes;
+
+            if (currentFGColor.HasValue)
+            {
+                if (currentBGColor.HasValue)
+                    value = (short)(((short)currentFGColor.Value & 0x0F) | ((short)currentBGColor.Value & 0xF0));
+                else
+                    value = (short)(((short)currentFGColor.Value & 0x0F) | (value & 0xF0));
+            } else if (currentBGColor.HasValue)
+                    value = (short)((value & 0x0F) | ((short)currentBGColor.Value & 0xF0));
+
+            return value;
+        }
+
+        /// <summary>
         /// Fills in a character on a single point using the assigned color attribute and the given <paramref name="letter"/>, 
         /// marked at (<see cref="Point"/> <paramref name="point"/>).
         /// <para>See also: <seealso cref="BackgroundColor"/>, <seealso cref="ForegroundColor"/></para>
@@ -329,8 +361,7 @@ namespace ConsoleDrawing
             int index = y * bufferWidth + x;
             if (index >= 0 && index < bufferSize)
             {
-                buffer[index].Char.UnicodeChar = letter;
-                buffer[index].Attributes = currentAttribute;
+                FillBufferPoint(index, letter);
             }
         }
 
@@ -517,22 +548,13 @@ namespace ConsoleDrawing
         }
 
         /// <summary>
-        /// Sets the color attribute to be used on following drawings. This sets both foreground and background color at the same time.
-        /// <para>See: <see cref="Colors"/></para>
-        /// </summary>
-        /// <param name="attribute">The raw <seealso cref="byte"/> attribute.</param>
-        public static void SetColorAttribute(byte attribute)
-        {
-            currentAttribute = attribute;
-        }
-
-        /// <summary>
         /// Resets the color attribute to be used on following drawing to default color, 
-        /// <seealso cref="Colors.GREY"/> for foreground and <seealso cref="Colors.BLACK"/> for background.
+        /// <seealso cref="Color.GREY"/> for foreground and <seealso cref="Color.BLACK"/> for background.
         /// </summary>
-        public static void ResetColorAttribute()
+        public static void ResetColor()
         {
-            currentAttribute = Colors.P_DEFAULT;
+            currentFGColor = Color.DEFAULT_FOREGROUND;
+            currentBGColor = Color.DEFAULT_BACKGROUND;
         }
         #endregion
 
@@ -583,10 +605,12 @@ namespace ConsoleDrawing
         [StructLayout(LayoutKind.Explicit)]
         private struct CharInfo
         {
+            private const short DEFAULT_ATTRIBUTE = ((short)Color.DEFAULT_FOREGROUND & 0x0F) | ((short)Color.DEFAULT_BACKGROUND & 0xF0);
+
             [FieldOffset(0)] public CharUnion Char;
             [FieldOffset(2)] public short Attributes;
 
-            public static CharInfo NewAsciiChar(byte ascii, short attributes = Colors.P_DEFAULT)
+            public static CharInfo NewAsciiChar(byte ascii, short attributes = DEFAULT_ATTRIBUTE)
             {
                 var info = new CharInfo();
                 info.Char.AsciiChar = ascii;
@@ -594,7 +618,7 @@ namespace ConsoleDrawing
                 return info;
             }
 
-            public static CharInfo NewUnicodeChar(char unicode, short attributes = Colors.P_DEFAULT)
+            public static CharInfo NewUnicodeChar(char unicode, short attributes = DEFAULT_ATTRIBUTE)
             {
                 var info = new CharInfo();
                 info.Char.UnicodeChar = unicode;

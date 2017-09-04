@@ -8,8 +8,8 @@ namespace ConsoleDrawing.Objects
 {
     public class FlashingText : Text
     {
-        public byte[] foregrounds;
-        public byte[] backgrounds;
+        public Color[] foregrounds;
+        public Color[] backgrounds;
 
         /// <summary>
         /// Time before a color change in seconds.

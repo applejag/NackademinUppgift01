@@ -125,8 +125,8 @@ namespace ConsoleDrawing.Objects
 
             if (state)
             {
-                Time.OnEventUpdate += Update;
-                Time.OnEventDraw += Draw;
+                //Time.OnEventUpdate += Update;
+                //Time.OnEventDraw += Draw;
 
                 if (!m_Initiated)
                 {
@@ -134,11 +134,11 @@ namespace ConsoleDrawing.Objects
                     all.Add(this);
                 }
             }
-            else
-            {
-                Time.OnEventUpdate -= Update;
-                Time.OnEventDraw -= Draw;
-            }
+            //else
+            //{
+            //    Time.OnEventUpdate -= Update;
+            //    Time.OnEventDraw -= Draw;
+            //}
             m_Enabled = state;
         }
         
@@ -152,8 +152,8 @@ namespace ConsoleDrawing.Objects
         {
             if (Destroyed) return;
             
-            Time.OnEventUpdate -= Update;
-            Time.OnEventDraw -= Draw;
+            //Time.OnEventUpdate -= Update;
+            //Time.OnEventDraw -= Draw;
             SetEnabled(false);
             m_Destroyed = true;
 
@@ -167,10 +167,7 @@ namespace ConsoleDrawing.Objects
 
             lock (all)
             {
-                if (!all.Remove(this))
-                {
-                    throw new InstanceNotFoundException("Failed to fully destroy the object " + GetType().Name);
-                }
+                all.Remove(this);
             }
         }
 

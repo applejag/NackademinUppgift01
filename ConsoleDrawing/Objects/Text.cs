@@ -9,12 +9,17 @@ namespace ConsoleDrawing.Objects
 {
     public class Text : Drawable
     {
-        public string text;
+        private string[] _lines;
+        private string _text;
+        public string text {
+            get => _text;
+            set => _lines = SplitString(_text = value, maxWidth);
+        }
         public int maxWidth;
-        public byte foregroundColor = Colors.GREY;
-        public byte backgroundColor = Colors.BLACK;
+        public Color? foregroundColor = Color.GREY;
+        public Color? backgroundColor = null;
 
-        private string[] SplitString()
+        private static string[] SplitString(string text, int maxWidth)
         {
             List<string> list = new List<string>(text.Split('\n'));
 
@@ -39,12 +44,15 @@ namespace ConsoleDrawing.Objects
             Drawing.ForegroundColor = foregroundColor;
             Drawing.BackgroundColor = backgroundColor;
             Point approx = ApproxPosition;
-            string[] parts = SplitString();
+            int left = Math.Max(-approx.x, 0);
+            if (approx.x < 0) approx.x = 0;
 
-            foreach (string part in parts)
+            foreach (string part in _lines)
             {
-                Drawing.SetCursorPosition(approx);
-                Drawing.Write(part);
+                if (left <= part.Length) {
+                    Drawing.SetCursorPosition(approx);
+                    Drawing.Write(part.Substring(left));
+                }
 
                 approx.y += 1;
             }

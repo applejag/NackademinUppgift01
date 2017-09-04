@@ -13,12 +13,12 @@ namespace ConsoleDrawing.Objects
         private List<PointInTime> points = new List<PointInTime>();
 
         public double TimeToLive { get; set; }
-        public byte Color { get; set; }
+        public Color Color { get; set; }
         public bool SelfDestruct { get; set; } = false;
 
         private Point oldPosition;
 
-        public Trail(double time = 5, byte color = Colors.LIGHT_CYAN) : base()
+        public Trail(double time = 5, Color color = Color.LIGHT_CYAN) : base()
         {
             TimeToLive = time;
             Color = color;

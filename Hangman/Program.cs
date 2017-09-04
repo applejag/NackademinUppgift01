@@ -1,4 +1,7 @@
-﻿using Helpers;
+﻿using ConsoleDrawing;
+using ConsoleDrawing.Objects;
+using Hangman.Graphics;
+using Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,16 +16,21 @@ namespace Hangman
 
         static void Main(string[] args)
         {
+            Drawing.SetWindowSize(120, 35);
+            //Drawing.FixedSize = true;
+            Drawing.CursorVisible = false;
+
             Console.WriteLine("Den som ska spela måste titta bort nu!");
             Console.Write("Skriv in ett ord: ");
 
             SecretWord hemligaOrdet = new SecretWord(Console.ReadLine(), ANTAL_GISSNINGAR);
             
             Console.Clear();
+            new SecretWordText(hemligaOrdet);
+            Time.RunFrameTimer();
 
             while (hemligaOrdet.GameOver == false)
             {
-                Console.WriteLine("Ord: {0}", hemligaOrdet.RenderWord());
 
                 if (hemligaOrdet.AnyMisses)
                     Console.WriteLine("Missar: {0}", hemligaOrdet.RenderMisses());
