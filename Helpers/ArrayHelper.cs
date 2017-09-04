@@ -9,7 +9,7 @@ namespace Helpers
     public static class ArrayHelper
     {
 
-        private static Random randomGen = new Random();
+        private static readonly Random randomGen = new Random();
 
         private static void TheShuffler<T>(T[] array, Random randomGen)
         {

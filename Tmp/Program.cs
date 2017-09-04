@@ -69,38 +69,39 @@ namespace Tmp
         static void Fireworks(string[] args)
         {
             Console.Title = "Kalles fyverkerier!";
-            Console.SetWindowSize(Console.WindowWidth, 34);
+            Console.SetWindowSize(100, 34);
             Drawing.SetWindowSize();
 
             Drawing.FixedSize = true;
             Drawing.CursorVisible = false;
-            Time.StartFrameTimer();
 
             PlayFireworkLaunchSound();
             new Firework(PlayFireworkExplosionSound);
 
-            new Text
-            {
-                text = HANGMAN,
-            };
+            new Text { text = HANGMAN };
 
-            new FlashingText
+            var flashingText = new FlashingText
             {
                 text = YOULOST,
-                foregrounds = new byte[] { Colors.LIGHT_RED, Colors.GREY },
-                Position = new Vector2(30, 10),
+                foregrounds = new byte[] {Colors.LIGHT_RED, Colors.GREY},
+                Position = new Vector2(30, 10)
             };
 
-            while (true)
+            void FireworkOnSpace()
             {
-                var info = Console.ReadKey(true);
-
-                if (info.Key == ConsoleKey.Spacebar)
+                if (Input.GetKeyDown(ConsoleKey.Spacebar))
                 {
                     PlayFireworkLaunchSound();
                     new Firework(PlayFireworkExplosionSound);
                 }
             }
+
+            var dummy = new Dummy
+            {
+                OnUpdate = FireworkOnSpace,
+            };
+            
+            Time.RunFrameTimer();
         }
 
         public static string soundFireworkLaunch = @"C:\Users\kalle\Downloads\firework_launch_sfx_01.wav";
@@ -129,7 +130,7 @@ namespace Tmp
             sound.Play();
         }
 
-        static void Hängagubbe(string[] args)
+        private static void Hängagubbe(string[] args)
         {
             var försök = 0; //Antal spel
             bool vunnit = false;

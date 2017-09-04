@@ -12,7 +12,7 @@ namespace Hangman
         public const char CHAR_LOCKED = '_';
         public const char CHAR_SPACING = ' ';
 
-        private readonly string word = string.Empty;
+        private readonly string word;
         private readonly int maxErrors;
 
         private string unlocked = " ";

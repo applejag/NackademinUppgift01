@@ -9,14 +9,18 @@ namespace PangBom
 {
     class Program
     {
+        const int PANG = 3;
+        const int BOM = 5;
+
         static void Main(string[] args)
         {
+
             // 39st elever
-            for (int i = 1; i <= 39; i++)
+            for (int i = 1; i <= 100; i++)
             {
-                if (i % 3 == 0)
+                if (i % PANG == 0)
                 {
-                    if (i % 5 == 0)
+                    if (i % BOM == 0)
                     {
                         Console.WriteLine("PangBom");
                     }
@@ -25,7 +29,7 @@ namespace PangBom
                         Console.WriteLine("Pang");
                     }
                 }
-                else if (i % 5 == 0)
+                else if (i % BOM == 0)
                 {
                     Console.WriteLine("Bom");
                 }

@@ -5,76 +5,30 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ConsoleDrawing.Objects;
 
 namespace ConsoleDrawing
 {
     public static class Time
     {
-        static Stopwatch stopwatch = Stopwatch.StartNew();
-        static ManualResetEvent timerStopper = new ManualResetEvent(false);
-        static RegisteredWaitHandle timerWaitHandle;
+        private static readonly object locker = new object();
+        private static readonly Stopwatch stopwatch = Stopwatch.StartNew();
         private static float deltaTime = 0;
-        private static long deltaMilliseconds = 0;
-        private static long millisecondsPerFrame;
-        private static float framesPerSecond = 30;
+        private static long millisecondsPerFrame = 0;
         private static long lastFrameTime = 0;
 
         public delegate void FrameEvent();
         public static event FrameEvent OnEventUpdate;
         public static event FrameEvent OnEventDraw;
 
-        private static object locker = new object();
-
+        /// <summary>
+        /// Get or set the target amount of time between each frame.
+        /// To get the actual time elapsed, use <see cref="DeltaTime"/>
+        /// </summary>
         public static float FramesPerSecond
         {
-            get => framesPerSecond;
-            set
-            {
-                framesPerSecond = value;
-                StartFrameTimer();
-            }
-        }
-        
-        public static void StartFrameTimer()
-        {
-            timerStopper.Set();
-            timerStopper = new ManualResetEvent(false);
-            
-            millisecondsPerFrame = (long)(1000 / framesPerSecond);
-
-            timerWaitHandle = ThreadPool.RegisterWaitForSingleObject(timerStopper, FrameCallback, null, millisecondsPerFrame, false);
-        }
-
-        static void FrameCallback(object state, bool timedOut)
-        {
-            lock (locker)
-            {
-                long now = stopwatch?.ElapsedMilliseconds ?? 0;
-                deltaMilliseconds = now - lastFrameTime;
-                deltaTime = deltaMilliseconds * 0.001f;
-
-                // Fix size
-                if (Drawing.FixedSize == false)
-                {
-                    if (Console.WindowWidth != Drawing.BufferWidth || Console.WindowHeight != Drawing.BufferHeight)
-                        Drawing.SetWindowSize(Console.WindowWidth, Drawing.BufferHeight);
-                }
-
-                // Update
-                OnEventUpdate?.Invoke();
-
-                // Draw
-                Drawing.ResetColorAttribute();
-                Drawing.Clear();
-                OnEventDraw?.Invoke();
-
-                Drawing.Render();
-
-                // Garbage collect
-                Objects.Drawable.all?.RemoveAll(p => p?.Destroyed ?? true);
-
-                lastFrameTime = now;
-            }
+            get => millisecondsPerFrame * 0.001f;
+            set => millisecondsPerFrame = (long) value * 1000;
         }
 
         /// <summary>
@@ -92,9 +46,53 @@ namespace ConsoleDrawing
         /// </summary>
         public static float DeltaTime => deltaTime;
 
-        /// <summary>
-        /// Time elapsed since last frame in milliseconds.
-        /// </summary>
-        public static double DeltaMilliseconds => deltaMilliseconds;
+        public static void RunFrameTimer()
+        {
+            while (true)
+            {
+                long now = stopwatch.ElapsedMilliseconds;
+                long elapedTime = now - lastFrameTime;
+                
+                if (elapedTime >= millisecondsPerFrame)
+                {
+                    deltaTime = elapedTime * 0.001f;
+
+                    FrameCallback();
+
+                    lastFrameTime = now;
+                }
+            }
+        }
+
+        private static void FrameCallback()
+        {
+            lock (locker)
+            {
+                // Fix size
+                if (Drawing.FixedSize == false)
+                {
+                    if (Console.WindowWidth != Drawing.BufferWidth || Console.WindowHeight != Drawing.BufferHeight)
+                        Drawing.SetWindowSize(Console.WindowWidth, Drawing.BufferHeight);
+                }
+
+                // Update
+                Input.AnalyzeInput();
+                OnEventUpdate?.Invoke();
+
+                // Draw
+                Drawing.ResetColorAttribute();
+                Drawing.Clear();
+
+                OnEventDraw?.Invoke();
+
+                Drawing.Render();
+
+                // GC
+                lock (Drawable.all)
+                {
+                    Drawable.all?.RemoveAll(d => d == null || d.Destroyed);
+                }
+            }
+        }
     }
 }

@@ -32,7 +32,7 @@ namespace Hangman.Graphics
             color = colors[RandomHelper.Range(colors.Length)];
             lightColor = (byte)(color | Colors.INTENSITY);
 
-            Position = new Vector2(Drawing.BufferWidth * RandomHelper.Value, Drawing.BufferHeight);
+            Position = new Vector2(Drawing.BufferWidth * RandomHelper.Float, Drawing.BufferHeight);
             trail = new Trail(0.5f, color);
             trail.SetParent(this, false);
             Velocity = new Vector2(RandomHelper.Range(-5f, 5f), -RandomHelper.Range(0.5f, 0.8f) * Drawing.BufferHeight);
@@ -61,7 +61,7 @@ namespace Hangman.Graphics
                     var particle = new Particle
                     {
                         Position = Position,
-                        color = RandomHelper.Value >= 0.3f ? lightColor : color,
+                        color = RandomHelper.Float >= 0.3f ? lightColor : color,
                     };
                 }
 
@@ -83,19 +83,32 @@ namespace Hangman.Graphics
             public const float GRAVITY = 9.81f;
             public byte color;
 
+            private bool isForeground;
+
             public Particle() : base()
             {
-                float lifetime = RandomHelper.Value;
+                float lifetime = RandomHelper.Float;
 
                 Velocity = Vector2.FromDegrees(RandomHelper.Range(360f), 2 + 8 * lifetime);
 
                 Destroy(1 + lifetime * 1);
+
+                isForeground = RandomHelper.Boolean;
             }
 
             public override void Draw()
             {
-                Drawing.BackgroundColor = color;
-                Drawing.FillPoint(ApproxPosition, ' ');
+                if (isForeground)
+                {
+                    Drawing.BackgroundColor = Colors.BLACK;
+                    Drawing.ForegroundColor = color;
+                    Drawing.FillPoint(ApproxPosition, '*');
+                }
+                else
+                {
+                    Drawing.BackgroundColor = color;
+                    Drawing.FillPoint(ApproxPosition, ' ');
+                }
             }
 
             public override void Update()

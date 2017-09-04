@@ -11,47 +11,43 @@ namespace GuessTheNumber
     {
         static void Main(string[] args)
         {
-
-            bool fortsättSpela = true;
             Random slumpGenerator = new Random();
 
-            while (fortsättSpela)
-            {
-                Console.WriteLine("Gissa ett tal mellan 1 och 100.");
+        BörjaSpelet:
 
-                int antalGissningar = 0;
-                int slumpatTal = slumpGenerator.Next(1, 101); // 1 INCLUSIVE -> 101 EXCLUSIVE
+            Console.WriteLine("Gissa ett tal mellan 1 och 100.");
 
-            GissaEttTal:
+            int antalGissningar = 0;
+            int slumpatTal = slumpGenerator.Next(1, 101); // 1 INCLUSIVE -> 101 EXCLUSIVE
 
-                antalGissningar++;
-                int gissning = ConsoleHelper.AskForInt($"Gissning {antalGissningar}: ");
+        GissaEttTal:
+
+            antalGissningar++;
+            int gissning = ConsoleHelper.AskForInt($"Gissning {antalGissningar}: ");
                 
-                if (gissning == slumpatTal)
-                {
-                    Console.WriteLine($"Rätt! Du gissade rätt på {antalGissningar} försök.");
+            if (gissning == slumpatTal)
+            {
+                Console.WriteLine($"Rätt! Du gissade rätt på {antalGissningar} försök.");
 
-                    string svar = ConsoleHelper.AskForSpecificString("Vill du spela igen (Ja/Nej)? ", "ja", "nej");
-                    if (svar == "nej")
-                    {
-                        fortsättSpela = false;
-                    }
+                string svar = ConsoleHelper.AskForSpecificString("Vill du spela igen (Ja/Nej)? ", "ja", "nej");
+                if (svar == "ja")
+                {
+                    goto BörjaSpelet;
+                }
+            }
+            else
+            {
+                // Fel gissning
+                if (slumpatTal > gissning)
+                {
+                    Console.WriteLine("Talet är större.");
                 }
                 else
                 {
-                    // Fel gissning
-                    if (slumpatTal > gissning)
-                    {
-                        Console.WriteLine("Talet är större.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Talet är mindre.");
-                    }
-
-                    goto GissaEttTal;
+                    Console.WriteLine("Talet är mindre.");
                 }
-                
+
+                goto GissaEttTal;
             }
 
             Console.WriteLine("Tack för den här gången!");

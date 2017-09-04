@@ -2,7 +2,9 @@
 using Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Management.Instrumentation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,8 +68,8 @@ namespace ConsoleDrawing.Objects
         /// Z-depth relative to this objects parent (if any)
         /// </summary>
         public int ZDepth {
-            get => Parent == null ? localZDepth : (Parent.ZDepth + localZDepth);
-            set => localZDepth = Parent == null ? value : (value - Parent.ZDepth);
+            get => (Parent?.ZDepth + localZDepth) ?? localZDepth;
+            set => localZDepth = (value - Parent?.ZDepth) ?? value;
         }
         
         /// <summary>
@@ -120,6 +122,7 @@ namespace ConsoleDrawing.Objects
         public void SetEnabled(bool state)
         {
             if (m_Destroyed) return;
+
             if (state)
             {
                 Time.OnEventUpdate += Update;
@@ -161,6 +164,14 @@ namespace ConsoleDrawing.Objects
             }
 
             SetParent(null);
+
+            lock (all)
+            {
+                if (!all.Remove(this))
+                {
+                    throw new InstanceNotFoundException("Failed to fully destroy the object " + GetType().Name);
+                }
+            }
         }
 
         /// <summary>

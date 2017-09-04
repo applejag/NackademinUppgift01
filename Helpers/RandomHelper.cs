@@ -8,12 +8,22 @@ namespace Helpers
 {
     public static class RandomHelper
     {
-        private static Random randomizer = new Random();
+        private static readonly Random randomizer = new Random();
+
+        /// <summary>
+        /// Random boolean value (true, false)
+        /// </summary>
+        public static bool Boolean => randomizer.Next(2) == 0;
 
         /// <summary>
         /// Random value between 0 (inclusive) and 1 (exclusive)
         /// </summary>
-        public static float Value => (float)randomizer.NextDouble();
+        public static float Float => (float)randomizer.NextDouble();
+
+        /// <summary>
+        /// Random value between 0 (inclusive) and 1 (exclusive)
+        /// </summary>
+        public static double Double => randomizer.NextDouble();
 
         /// <summary>
         /// Random <seealso cref="int"/> between 0 (inclusive) and <paramref name="upper"/> (exclusive)
