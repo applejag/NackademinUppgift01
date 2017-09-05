@@ -103,6 +103,26 @@ namespace Hangman.Graphics
             await Task.Delay((int)(messageDuration * 1000));
         }
 
+        public async Task AnimationLoose()
+        {
+            FrameIndex = 1;
+            Say("NEJ JAG VILL INTE DÖÖÖÖ!!");
+            await Task.Delay(3000);
+            FrameIndex = 3;
+            Say("*BLERGGHGHGHG*");
+
+            frames = LoadFromFile("Animations/HangmanHung.txt");
+            for(int i = 1; i<10;i++)
+            {
+                FrameIndex = i % 2;
+                await Task.Delay(1000);
+            }
+
+            FrameIndex = 2;
+
+            await Task.Delay((int)(messageDuration * 1000));
+        }
+
         public void Say(string message)
         {
             messageTimeLeft = messageDuration;

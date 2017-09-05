@@ -23,7 +23,7 @@ namespace Hangman
 
         protected readonly AsciiHangman hangmanAnimated;
 
-        protected bool win = false;
+        protected bool gameover = false;
 
         public Controller(SecretWord secretWord) : base(null)
         {
@@ -41,6 +41,8 @@ namespace Hangman
 
             missesText.foregroundColor = Color.LIGHT_YELLOW;
             inputField.Submitted += OnInputFieldSubmit;
+
+            //BeepPlayer.PlayTones(BeepPlayer.ParseTones(BeepPlayer.Tetris));
         }
 
         private void OnInputFieldSubmit(TextField field)
@@ -104,8 +106,12 @@ namespace Hangman
             inputField.Destroy();
             Drawing.CursorVisible = false;
             Update();
-            await hangmanAnimated.AnimationWin();
-            win = true;
+            if (secretWord.Finished)
+                await hangmanAnimated.AnimationWin();
+            else
+                await hangmanAnimated.AnimationLoose();
+            
+            gameover = true;
         }
 
         protected override void Update()
@@ -131,7 +137,7 @@ namespace Hangman
             inputField.LocalPosition = Point.Right * prompt.text.Length;
 
 
-            if (win)
+            if (gameover)
             {
                 var wordLabelText = new Text("Ord:", parent: wordText) { Position = wordText.Position };
 

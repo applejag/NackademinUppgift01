@@ -79,6 +79,9 @@
     <Content Include="Animations\HangmanDance.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Animations\HangmanHung.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Animations\Poledancer.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BeepPlayer.cs" />
     <Compile Include="Colors.cs" />
     <Compile Include="Drawing.cs" />
     <Compile Include="Input.cs" />
