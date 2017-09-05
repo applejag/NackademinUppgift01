@@ -1,0 +1,379 @@
+﻿25,21
+. .....  5BQ7   ........ 
+.       :BBBBr           
+. ...   IRI5BZ  . ...... 
+. ..     KbE.      . . . 
+. .    iLvBDP.      . .  
+    rBBIiv1DBBBBh    . . 
+.  :BBBBXRBQBQBBBB.   .  
+.  1BBI  YQMYPMjEB2  . . 
+.  vBQ.  .Mr:UrvRBM   .. 
+.  iBB   BBZYYrhRBQ  . . 
+.   .K. gBBRBZMQBQB:  .. 
+      QBBBQMgBQb..dd . . 
+. .   BQBMQgMMB    .  .. 
+  ..  2BQRgQgQBL     . . 
+. .   IBBMMMRMBQbYj.  .. 
+  ..  EBQMgQgRMBBd . . . 
+. .   QQBgMgMDQMBB    .. 
+  ..  MBQMgMgMgQBB   . . 
+. .   QBBgMQBMQgBB  . .. 
+. ..  bBMRQBbBQBB5   ... 
+.      BMMB. LBRBg       
+. .....   BQBQ. ........ 
+.        iBMEBb          
+. ...    .Ks2P7   . .... 
+  ..      KQD.     . . . 
+. .   7L5QB5gR:     . .  
+    :BBBBBE2BBBBQj   . . 
+.   BBQBR:r7BQBBBBK   .  
+.  :BQBBBYi777bL1BB  . . 
+.  :BQB7 rUIi1ivgBB   .. 
+.   dB    LBS7rPMBQ  . . 
+. .  h. .bBRBQBQBQB   .. 
+     2QBBBQMgBQ:.rBi . . 
+. .  LBRQMRDMQ7   :   .. 
+     LBMMMgMMBr  .   . . 
+. .  7BMQDMMRBb7u.  . .. 
+  .  7BQggMMgBgEK7   . . 
+. .  7BQMDMDMMBQBs    .. 
+     iBBDgMMDMMQBs   . . 
+. .  7BQRDQBBgRMB7  . .. 
+. ..  ZBMBQhQBRBB    ... 
+.     uBMBK .BMQB7       
+. .......  BBBB7  ...... 
+.         .BDZQB         
+. ...      uU1bi  ...... 
+.  .       bQBi    . ... 
+. .   SQBBBDJRBi    . .. 
+.    QQBBBBBEBBBBR:  . . 
+.   :BBMBRdMMdBQBQB:  .. 
+.   PBBBQBErrrI7LQQh   . 
+.   BQBQBBBE7U7YdQBv  .. 
+.   QB..r27KQ21gQBB7   . 
+.   jX   .:jBBBBBBBr  .. 
+.    iB:7QQBRBb  rQ7   . 
+. .  rBBBBBQBB   ..   .. 
+. .  XBBRBRQBB  :    . . 
+. .  hBMQMMRBMY:B   . .. 
+     BQQMRgRQM5hB: . . . 
+. . .BBDRMRMQQBMj   . .. 
+.   .BBMMBMQRRRBB  . . . 
+. .  gBRBQBQQgRQB   . .. 
+. ..  QBBB5bBBQB1  ..... 
+.     BMQB  BMQBB        
+. .......   MBBB7 ...... 
+.          .QQdBR        
+. ... .     IuUb7  ..... 
+.  .       .XQM7   . ... 
+. .   .MBBBBbYBR.     .. 
+. .   QBBBBBQZBBBQ7    . 
+. .  vBRBMMhQbQQBQBZ  .. 
+.    BBBMQRU:iL1vIQB.  . 
+.   iQBQBRMQ7Jv72EBB  .. 
+.   QB:jBBDRQXLEZBBg   . 
+. . L   EQMERBBBBBB5  .. 
+.    :i rBDggBh  vQS   . 
+. .  vbdBRMMBB   .7.  .. 
+.    MBBQQMQBI  7    . . 
+.   .BBMQgMRB2rUB   . .. 
+    1BQgMMDQRPsbB  . . . 
+.   RBRERgMMQQBJb   . .. 
+.  .BBggRRMQMMQBB  . . . 
+.   rYBMQMBQMZRQb   . .. 
+.     QRQBsbBQQB.  ..... 
+.     BDRB :BMQB5        
+. .........  ZBBB.  .... 
+.           .BQQQg       
+. .....     .b2UM1  .... 
+.  .         PMgi    ... 
+. . .  .ZBBQBSSQZ     .. 
+   .  .BBBBBQEXBBB2.   . 
+      BQBBQDQBBQBQBB7  . 
+. .  BBBMBMBvr:ZKIQBB  . 
+.7DjYUBQBQRB7:2i:1QBh  . 
+  .sj  BBQgQQ2r7KBBB.  . 
+.      QBMRDBBBBBBBB  .. 
+.     hBRQMMMBM77KQM   . 
+. .   BBMMQRBR    Rr  .. 
+. .  5BBgQMBB7  7:   . . 
+. .  BBMQMRBZLiQB   . .. 
+    :BQMMRgBQMYUBi   . . 
+.   bBBEQMRRBQBPBi  . .. 
+.  .BBRgQQMQRRRBB:   . . 
+.   iuBMQMBQRgMQB.  .... 
+.    .QQBBbgBBRBS  ..... 
+.    .BDQB  BRQBB        
+. .........   gbs   .... 
+.            MQBQM       
+. . . . .   .BE5BQ. .... 
+.            :bP1    ... 
+.  .jJ. .Y17YZMDR     .. 
+.   7IrSBBBBQR7MBB:    . 
+. .  5QQBBQQMBBQBQBB:    
+.    . .QBMQbEUMBQQBB. . 
+. .     BBQQI.7uY7DBB  . 
+.   j7 JBBMQD71vLMBBU  . 
+. . .1.EBQQDBQSPBBBB. .. 
+.  .   BBQMMMBBBQBQM   . 
+. .   MBRMQMBB.  .B7  .. 
+. .  :BBDQRBB.   7r    . 
+. .  KBQMMQBUi.bBr  . .. 
+     BQMMRMBDJvBB:   . . 
+.   XBBERgRQBQXMBj  . .. 
+.  .BBQgRQMQQBQBBv   . . 
+.  .bDBMQgQQQgRRB:  .... 
+.    .QQQBQBBQMBB  ..... 
+.     BZRB. BRQBg        
+. .........   BBBQ  .... 
+.            rQQQB7      
+. ..... .    :D15QL .... 
+.  . .        dMb:   ... 
+. . .   LUUBBB5PBb    .. 
+. ..   BsrsBQBSEBBd:   . 
+. .  :BhbIBBMBBQBQBBg    
+.    BL   BBPr:JRhdBB7 . 
+. . .S   5BQg.5LivPBB.   
+.    Qi7BBQRQb77UQBBS  . 
+. .    QBQQDRBBBBBBB. .. 
+.  .  iBQQMMMBQ1SMQB   . 
+. .   QBMRQRBB   .Bv  .. 
+. .  .BBDQMBB   ir     . 
+. .  rBMQMRBhr.BB   . .. 
+     BQMMMMBKLXBBi   . . 
+.   7BBDRgRQBg7MB:  . .. 
+.   BBMRMRMQQBMBB.   . . 
+. .  SBMQMBQQgQQB   .... 
+.    uQRBBXBQQRBj  ..... 
+.    UBEQB rBMQBL        
+. ..........  7BBK  .... 
+.             QBQB5      
+. ..... .    .BIIQM  ... 
+.  . .        1gPL   ... 
+. . .   .DBQZQhhBX    .. 
+. ..   7BBBBQBPXBBU    . 
+. .   rQBBX:7PBQBQBBb    
+.  . :BBQB7.:rr7DPbBBs . 
+. .  iB:  7SBrUsrL5BBi   
+.    sP   .BBQY72ZBBM  . 
+. .   iIhRBQQBBBBBBBr  . 
+.  .  :BBBRRgBBJYUQB   . 
+. .   BBQRRRBB.   Bs  .. 
+. .  :BBMQMQB7  :r     . 
+. .  rBMBgMQML SB   . .. 
+     hQQMMgBbJLBB.   . . 
+. . .BBMRDQRBQjUB   . .. 
+.   UBRQMRMQMBQBB  . . . 
+. .  sBMQMBMMDBQB   . .. 
+.    :QMQBURQQQB:  ..... 
+.    rBZRB hQMBB.        
+. ..........  uBB2  .... 
+.            .QBQBJ      
+. ..... .    :BISQE  ... 
+.  . .        IDP7   ... 
+. . .   .KgbXMhPB7    .. 
+. ..   rBBBBQBPSBBs    . 
+. .   .QBBBj7UBQBQBBh    
+.  . .BBQBB.::i7MbPBBv . 
+. .  :BS. Y7Piujr7UBBr   
+.  . rQ    MBBJ71dBBQ  . 
+. .   L7vJBQBBBBBBBBj    
+.  .   BBBQRgBBJjbQB.  . 
+. .   EBQRRMBB.   BB  .. 
+. ..  BBMQMQB7  .7     . 
+. .  :BRQMMQbv.hB     .. 
+     JQRMMDBgU7BBi   . . 
+. .  QBDRDMMBQ5hB.  . .. 
+.   UBRMMMMQMRQBB  . . . 
+. . .5BMQgBRMZMQB   .... 
+.     QRQB5DBQMBs  ..... 
+.    .BERB iBMBBi        
+. .........  :BQB5  .... 
+.            gQMMBY      
+. .....      U5s2Xr  ... 
+.  . .    :: :dbb    . . 
+. . .   KKLLhBIMBv     . 
+. ..   BBBiLRBgBBBBQr  . 
+. .   BQ.:YBBQMZBQBBBi   
+.    BB.   BRr:7Xv2BBj . 
+. .  Yr   BBB:LYiuDQB.   
+.    .I.ZBQRMRu7KRBBR  . 
+. .    LBQQZgRBBBBBBb    
+.  .   QBRDgZBB.  iB1  . 
+. .   :BQDMgMB.   7i   . 
+. ..  uBMMgMQd. 7B:    . 
+. .   ZBQDgDQIv7BZ    .. 
+   .  QBgMZgMBQ1gb   . . 
+. .   BMggMDRDQBBu  . .  
+. .  7BMZRDMDDEQB7   . . 
+. .  :BMRMQQgEZDB:  . .. 
+. ..  QMMBRPBQMBh  . ... 
+.     BDgBi QMRB2        
+. .........  :r:    .... 
+.           PBQBX        
+. ....     .BBRMBQY .... 
+.  .  ...   vX75i    ... 
+. . . iPS.. 5hZB7     .. 
+. ..   7vBBBQPQBBBK:   . 
+. .   LPbBBBQBBQBQBBK    
+.    7:  DBBdMuQBbQBB  . 
+. . .Q.  SBBZ:rU7LQBB  . 
+.    b.  BQQQLU7LRBBM  . 
+. .   h.BQBMQBESBBBBD    
+.  .   .BBRQMBBBMZZBM  . 
+. .    hBQQQQBB.   PJ  . 
+. ..   BQBMQRBu   27   . 
+. . . :BBMQRBg7:7BB   .. 
+   .  iBBRQRRBQPJBM  . . 
+. .   rQBMQMQQBBBBE   .. 
+. ..  1BQQQQRQgQBB7  . . 
+. .   BBQMQMQgMgBB:   .. 
+. ..  iBBBQBBQMQBB   ... 
+.      QBQB:iBBRB7       
+. .......  .25J   ...... 
+.         .BQBQd         
+. ..... . vBBbRBBu  .... 
+.  . .     22vji     ... 
+. . .     .b2bBv      .. 
+.      EBBBBJRBBBBh.   . 
+.  .i:RQBBBgBBBQBQBB:  . 
+.  :U57BQBMDhY7Q51QBI  . 
+. .  7PbBBQQ7.uviKBBK  . 
+.    :. iBQQB2JiUMBBP  . 
+. .  .  .QBgQBQMBBBBB    
+.  . .1:BBRRDQBBS7rhQ. . 
+. . .   BBQMMRB1   57  . 
+. ..   .QBMMgQQ   JB   . 
+. . .  :BRMMRQQr bBB  .. 
+   .   JBQMRMBEhJbBQ   . 
+. . .  MBgQMRMBBEuBX  .. 
+. ..   BBMMRMRMQBBBL   . 
+. . . iBBDQMRMMZMQB:  .. 
+. ... .MBBQBBBRQMBQ  ... 
+.      .BRBM 7BRQB:      
+. .....   .LY:   ....... 
+.        rBBQB7          
+. .....  MBBZBBBs ...... 
+.  . .    D27U:    . ... 
+. . .    :MjdB:     . .. 
+. ..  rhMBBvMBBBBM:    . 
+. .  2BQBBMBBQBQBQBv  .. 
+.    BBBQQDbJiKI7DQB   . 
+. .  ZBQBQBb:72iXEBB.  . 
+.    dBBBBRBMKvJhBBBj  . 
+.   u17LEQBgQBBBBBBBB    
+.    :v: DQRDRQBX  iQ. . 
+. .     iBBMMMBB:  .   . 
+. ..    QBMRgQRB.  Q   . 
+. . .   BQMMRMBBJ.bB  .. 
+   .   :BBgQMQQRKK5j   . 
+. . .  :BQRMRgBBBBMj  .. 
+. ..   JBQgQMRMQRBB5   . 
+. . .  QBMMMBRQgMRBS  .. 
+. ...  ZBBQBBBQBQBBJ ... 
+.       BQBB. BMRRBv     
+. .....  7dKr   ........ 
+.       SBQBQi           
+. ...   BQgPBQD:  . . .. 
+.  .    .dJL1      . . . 
+. .     7MubBr...   . .  
+.    :2MQBLMBBBBQR   . . 
+. . rBBBBMBBDRBMgBB   .. 
+    UBQBRMbY:rUi5BBj   . 
+. . .BBRBQMUi1iv5MBB     
+.    QQBBBBBRbuXQBBBS  . 
+. .  XBQZbgQQQBBBSLbB: . 
+  .. iQ.:::BgMMBS   :  . 
+. .   r  rdQMDQBZ     .. 
+  ..   .BBBQgRMBR. . . . 
+. . .  .BQMMQMQQBKSL. .. 
+.  .   iQBDRMRMQQBQS   . 
+. . .  iBQMgMgMMQBBJ  .. 
+. ..   YBQZRMQgRDQQu   . 
+. . .  BBQMgBBRMRMBj  .. 
+. ..   SBBRBQDBBQBQ7  .. 
+.       QRBB  BgMMBi     
+. ...   UMg7    ........ 
+.      MQBQBi.           
+. ...  QBPXbQb:   . . .. 
+.  .   :bJ75       . . . 
+. .    1BJbBRgQZ7   . .  
+.   rBBBQKdBBBBBQB   . . 
+.  :BBBRRQBDZQMsBBd   .. 
+   :QQMQBBir:1iLEBBi   . 
+.   QBBBBBJirj:jdBBB.    
+.   KBQB. ivBd2MQBBBB. . 
+. .  DB    jBQBBX   2  . 
+   .  jM:7QBMQMB:      . 
+. .    BBBBQQgQBR .i   . 
+  ..   BBBMRMMMBQDSIr. . 
+. . .  SBMMDQMRMBBB7  .. 
+.  .   KQBMMMMDRMBQr   . 
+. . .  bBRMgMMMgRMBL  .. 
+. ..   XBBDMMQMMDRQD   . 
+. . .  UBQRgBBBMQQBs  .. 
+. .. . :BQRBDhBBQBQ  ... 
+.       BMBB  BMMMB.     
+. ...         .......... 
+.      IgBMi             
+. ... MQBQBQgU  . . . .. 
+.  .  :BbjsU.    . . . . 
+. .    MKIbS..:     . .  
+     :RXi7bBBBBBu    . . 
+.  7BBBZi.jBBQBQBK    .. 
+   BQBQBgKBbLg7XBB.  . . 
+.  hBMBr  77rYrXRBB   .  
+   :BBQ   .BIL7PQBBQ   . 
+.   bQU  .BBBRBBBsrQ1 .. 
+      7LrBQQDQBB       . 
+. .    BBBBMMgQB7  .. .. 
+  ..   BBQDMMMRBQSJU7. . 
+. .    MBQMZRgQMBBB:  .. 
+.  .   ZQBMMMRgRgBQL   . 
+. . .  EBRMDMgMMMMB7  .. 
+. ..   ZBQDMgQgMDRQ1   . 
+. . .  MBMMgQQQgMMBI  .. 
+. ..   MBRgBBBBBQBQ  ... 
+.       BgQB. ZRRRB      
+. ...         .......... 
+.     7EZgi              
+. .  1BQBQBhU   . . . .. 
+.  . .BEYs1:.    . . . . 
+. .   DUS25  ..     . .  
+     :Bg7BBBBBBZ.    . . 
+.  Y77iSRBBBBQDQB.    .  
+  IBM7.SBM2i1vrRBB   . . 
+. JQBQ27ZbJ:1iuuBBB   .  
+   BBh   QBd5juQQBBB   . 
+.  UBQ   QBMBQBBP:.MY .. 
+    rK: sBRMEMMB.      . 
+.     :BBBMDgZRBZ     .. 
+   .   MBBEgZgMQQ2rr:  . 
+. .    JBQgEMgRMBQBj:. . 
+.  .   rQBggDRgMDBQU   . 
+. . .  :BQMZgZMDMgBd   . 
+.  .   :BBZgDMDgDMMB.  . 
+. . .  .BQMDRBBgMgBB: .  
+  .. .  BBDRBUZBMQQB   . 
+.       YQMBh 5QgEQQ     
+. ..        . .......... 
+.     rUj7               
+. .  BBQBQZL: . . . . .. 
+.    RBhsX5v     . . . . 
+. .  .PJu5.         . .  
+     IBjUBRBBBQi   . . . 
+.  :LbBEdQBBBQQQX     .  
+  SQi:.QBDui5i1QBh   . . 
+. ZQdr7BB5s:JiU2BBb   .  
+   BBP: iBMbI1SBQBBM   . 
+.  1BP   RQMQQBBJ  Q: .. 
+    SB. :BMgdggB7      . 
+.     7BBBMZZEMMB:     . 
+   .   5BBdgZDDRQBj7L7   
+. .    7BQDdMDMDMBBg...  
+.  .   7QBDDZMEgZMQB   . 
+. . .  iBRgEDZMEgDMQL    
+.  .   :BBEDZMggdgZBQ  . 
+. . .  .BQMEMMQMDZQBb    
+  .. .  BBDMQDMMMRRB   . 
+.       KQgQ1 BZDbRQ     

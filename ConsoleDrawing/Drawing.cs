@@ -305,6 +305,7 @@ namespace ConsoleDrawing
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void FillBufferPoint(int index, char letter)
         {
+            if (!currentBGColor.HasValue && letter == ' ') return;
             buffer[index].Attributes = GetFillColorForPoint(index);
             if (currentFGColor.HasValue)
                 buffer[index].Char.UnicodeChar = letter;

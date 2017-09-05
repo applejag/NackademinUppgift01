@@ -18,7 +18,7 @@ namespace Hangman
         private Drawable oldTextsContainer;
         private float oldTextsMoveSpeed;
 
-        private float fireworksDelay = 1;
+        private const float fireworksDelay = 1;
         private float fireworksLapsed = -5;
 
         public WinScreen(SecretWord secretWord, Text wordText, Text[] otherTexts) : base(null)
@@ -41,6 +41,7 @@ namespace Hangman
             startPos = wordText.Position;
 
             new YouWonText();
+            new Snoop();
         }
 
         protected override void Update()
@@ -48,8 +49,6 @@ namespace Hangman
             ShootFireworks();
             MoveOldTextObjects();
             MoveWordTextObject();
-            print("its flashing? {0}", wordText is FlashingText);
-            print("its xpos? {0}", wordText.Position.x);
         }
 
         protected override void Draw()
@@ -98,16 +97,26 @@ namespace Hangman
                 {
                     alignment = Text.Alignment.Center,
                     Position = targetPos,
-                    text = secretWord.RenderWord(),
+                    text = $" {secretWord.RenderWord()} ",
                     foregrounds = new[] { Color.LIGHT_YELLOW, Color.WHITE },
+                    backgroundColor = Color.BLACK,
                 };
 
                 new Text
                 {
                     alignment = Text.Alignment.Center,
                     Position = targetPos + Point.Up,
-                    text = "word was:",
+                    text = " word was: ",
                     foregroundColor = Color.GREY,
+                    backgroundColor = Color.BLACK,
+                };
+
+                new AnimatedText("Animations/Poledancer.txt")
+                {
+                    alignment = Text.Alignment.Center,
+                    Position =  targetPos + Point.Up * 6,
+                    foregroundColor = Color.LIGHT_MAGENTA,
+                    interval = 0.6f,
                 };
                     
                 new Airplane();

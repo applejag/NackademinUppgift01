@@ -21,6 +21,10 @@ namespace Hangman
         protected readonly Text wordText;
         protected readonly TextField inputField;
 
+        protected readonly AsciiHangman hangmanAnimated;
+
+        protected bool win = false;
+
         public Controller(SecretWord secretWord) : base(null)
         {
             this.secretWord = secretWord;
@@ -32,6 +36,8 @@ namespace Hangman
             triesLeftText = new Text("", parent: errorText);
             inputField = new TextField(parent: prompt);
             wordText = new Text($"Ord: {secretWord.RenderWord()}", parent: this);
+
+            hangmanAnimated = new AsciiHangman(parent: this) {Position = new Vector2(2,8)};
 
             missesText.foregroundColor = Color.LIGHT_YELLOW;
             inputField.Submitted += OnInputFieldSubmit;
@@ -54,11 +60,13 @@ namespace Hangman
                     {
                         errorText.foregroundColor = Color.LIGHT_GREEN;
                         errorText.text = "Rätt! ";
+                        hangmanAnimated.SayScore();
                     }
                     else
                     {
                         errorText.foregroundColor = Color.LIGHT_RED;
                         errorText.text = "Fel! ";
+                        hangmanAnimated.SayCurse();
                     }
                 }
             }
@@ -70,6 +78,7 @@ namespace Hangman
                 {
                     errorText.foregroundColor = Color.LIGHT_RED;
                     errorText.text = "Fel ord! ";
+                    hangmanAnimated.SayCurse();
                 }
             }
 
@@ -86,28 +95,17 @@ namespace Hangman
 
             if (secretWord.GameOver)
             {
-                Update();
-
-                var wordLabelText = new Text("Ord:", parent: wordText) {Position = wordText.Position};
-                inputField.Destroy();
-
-                Text[] textDrawables = {
-                    wordLabelText,
-                    errorText,
-                    missesLabelText,
-                    missesText,
-                    triesLeftText,
-                    prompt,
-                };
-
-                if (secretWord.Finished)
-                    new WinScreen(secretWord, wordText, textDrawables);
-                else
-                    new LoseScreen(secretWord);
-
-                Drawing.CursorVisible = false;
-                Destroy();
+                WinTask();
             }
+        }
+
+        protected async void WinTask()
+        {
+            inputField.Destroy();
+            Drawing.CursorVisible = false;
+            Update();
+            await hangmanAnimated.AnimationWin();
+            win = true;
         }
 
         protected override void Update()
@@ -131,6 +129,32 @@ namespace Hangman
             prompt.LocalPosition = Point.Down * row * 2;
 
             inputField.LocalPosition = Point.Right * prompt.text.Length;
+
+
+            if (win)
+            {
+                var wordLabelText = new Text("Ord:", parent: wordText) { Position = wordText.Position };
+
+                Text[] textDrawables = {
+                    wordLabelText,
+                    errorText,
+                    missesLabelText,
+                    missesText,
+                    triesLeftText,
+                    prompt,
+                };
+
+                if (secretWord.Finished)
+                {
+                    var winScreen = new WinScreen(secretWord, wordText, textDrawables);
+                    hangmanAnimated.SetParent(winScreen);
+                }
+                else
+                    new LoseScreen(secretWord);
+
+                Drawing.CursorVisible = false;
+                Destroy();
+            }
         }
 
         protected override void Draw()
