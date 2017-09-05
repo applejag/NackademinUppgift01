@@ -93,6 +93,18 @@ namespace ConsoleDrawing.Structs
         #endregion
 
         #region Static functions
+
+        public static Vector2 LerpUnclamped(Vector2 a, Vector2 b, float t)
+        {
+            return b * t + a * (1 - t);
+        }
+
+        public static Vector2 Lerp(Vector2 a, Vector2 b, float t)
+        {
+            t = MathHelper.Clamp01(t);
+            return b * t + a * (1 - t);
+        }
+
         public static Vector2 ClampMagnitude(Vector2 vector, float maxLength)
         {
             if (vector.SqrMagnitude > maxLength * maxLength)

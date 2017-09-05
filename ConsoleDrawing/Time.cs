@@ -6,16 +6,18 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ConsoleDrawing.Objects;
+using Helpers;
 
 namespace ConsoleDrawing
 {
     public static class Time
     {
         private static readonly object locker = new object();
-        private static readonly Stopwatch stopwatch = Stopwatch.StartNew();
+        private static readonly Stopwatch stopwatch = new Stopwatch();
         private static float deltaTime = 0;
         private static long millisecondsPerFrame = 0;
         private static long lastFrameTime = 0;
+        private static bool running = false;
 
         public delegate void FrameEvent();
 
@@ -44,9 +46,25 @@ namespace ConsoleDrawing
         /// </summary>
         public static float DeltaTime => deltaTime;
 
+        /// <summary>
+        /// Returns true when the frame timer currently running.
+        /// <para>See: <see cref="RunFrameTimer"/>, <see cref="StopFrameTimer"/></para>
+        /// </summary>
+        public static bool IsRunning => running;
+
+        public static void StopFrameTimer()
+        {
+            running = false;
+        }
+
         public static void RunFrameTimer()
         {
-            while (true)
+            if (running) throw new InvalidOperationException("Frame timer is already running!");
+
+            running = true;
+            stopwatch.Start();
+
+            while (running)
             {
                 long now = stopwatch.ElapsedMilliseconds;
                 long elapedTime = now - lastFrameTime;
@@ -60,6 +78,8 @@ namespace ConsoleDrawing
                     lastFrameTime = now;
                 }
             }
+
+            stopwatch.Stop();
         }
 
         private static void FrameCallback()
@@ -76,6 +96,7 @@ namespace ConsoleDrawing
                 lock (Drawable.all)
                 {
                     // Update
+                    Drawable.debug = string.Empty;
                     Input.AnalyzeInput();
                     for (int i = Drawable.all.Count - 1; i >= 0; i--)
                     {
@@ -95,6 +116,17 @@ namespace ConsoleDrawing
                     foreach (Drawable drawable in Drawable.all)
                         if (drawable?.Enabled ?? false)
                             drawable.Draw();
+
+                    // Debug text
+                    Drawing.BackgroundColor = null;
+                    Drawing.ForegroundColor = Color.GREEN;
+                    string[] debug = StringHelper.SplitString(Drawable.debug, Drawing.BufferWidth);
+                    int debugLength = debug.Length;
+                    for (int i = 0; i < debugLength; i++)
+                    {
+                        Drawing.SetCursorPosition(0, Drawing.BufferHeight - debugLength + i);
+                        Drawing.Write("<DEBUG> " + debug[i]);
+                    }
 
                     Drawing.Render();
                 }

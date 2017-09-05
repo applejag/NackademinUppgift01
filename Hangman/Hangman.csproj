@@ -42,13 +42,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller.cs" />
     <Compile Include="Graphics\Airplane.cs" />
-    <Compile Include="Graphics\SecretWordText.cs" />
     <Compile Include="Graphics\Firework.cs" />
     <Compile Include="Graphics\Rainbow.cs" />
+    <Compile Include="LoseScreen.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SecretWord.cs" />
+    <Compile Include="WinScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

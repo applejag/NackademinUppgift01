@@ -23,12 +23,8 @@ namespace Hangman.Graphics
         Color color;
         Color lightColor;
 
-        Action onExplosion;
-
-        public Firework(Action onExplosion) : base()
+        public Firework() : base()
         {
-            this.onExplosion = onExplosion;
-
             color = colors[RandomHelper.Range(colors.Length)];
             lightColor = color | Color.INTENSITY;
 

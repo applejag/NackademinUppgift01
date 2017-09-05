@@ -14,7 +14,7 @@ namespace ConsoleDrawing.Objects
 
         public override void Update()
         {
-            localPosition += Velocity * Time.DeltaTime;
+            LocalPosition += Velocity * Time.DeltaTime;
         }
     }
 }

@@ -10,8 +10,37 @@ namespace Helpers
     {
 
         public const float PI = 3.14159265358979f;
-        public const float Deg2Rad = (PI * 2f) / 360f;
-        public const float Rad2Deg = 360f / (PI * 2f);
+        public const float Deg2Rad = PI / 180f;
+        public const float Rad2Deg = 180f / PI;
+
+        public static float SmoothDamp(float value, float a, float b)
+        {
+            if (a > b)
+            {
+                float old_min = a;
+                a = b;
+                b = old_min;
+                value = b + a - value;
+            }
+            float delta = b - a;
+            return SmoothDamp01((value - a) / delta) * delta + a;
+        }
+
+        public static float SmoothDamp01(float value)
+        {
+            return (float) (-0.5 * (Math.Cos(Math.PI * value) - 1));
+        }
+
+        public static float Lerp(float a, float b, float t)
+        {
+            t = Clamp01(t);
+            return b * t + a * (1 - t);
+        }
+
+        public static float LerpUnclamped(float a, float b, float t)
+        {
+            return b * t + a * (1 - t);
+        }
 
         public static int Clamp(int value, int min, int max)
         {

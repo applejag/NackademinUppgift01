@@ -16,6 +16,31 @@ namespace ConsoleDrawing.Structs
             this.x = x;
             this.y = y;
         }
+        
+        /// <summary>
+        /// Shorthand for writing <seealso cref="Point"/>(0, -1).
+        /// </summary>
+        public static Point Up => new Point(0, -1);
+        /// <summary>
+        /// Shorthand for writing <seealso cref="Point"/>(0, 1).
+        /// </summary>
+        public static Point Down => new Point(0, 1);
+        /// <summary>
+        /// Shorthand for writing <seealso cref="Point"/>(-1, 0).
+        /// </summary>
+        public static Point Left => new Point(-1, 0);
+        /// <summary>
+        /// Shorthand for writing <seealso cref="Point"/>(1, 0).
+        /// </summary>
+        public static Point Right => new Point(1, 0);
+        /// <summary>
+        /// Shorthand for writing <seealso cref="Point"/>(0, 0).
+        /// </summary>
+        public static Point Zero => new Point(0, 0);
+        /// <summary>
+        /// Shorthand for writing <seealso cref="Point"/>(1, 1).
+        /// </summary>
+        public static Point One => new Point(1, 1);
 
         public void Deconstruct(out int x, out int y)
         {

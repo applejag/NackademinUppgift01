@@ -13,6 +13,7 @@ namespace ConsoleDrawing.Objects
     public abstract class Drawable
     {
         internal static readonly List<Drawable> all = new List<Drawable>();
+        internal static string debug = string.Empty;
 
         private bool m_Initiated = false;
         private bool m_Destroyed = false;
@@ -49,14 +50,14 @@ namespace ConsoleDrawing.Objects
         /// <summary>
         /// Local position of this object.
         /// </summary>
-        public Vector2 localPosition = Vector2.Zero;
+        public Vector2 LocalPosition { get; set; } = Vector2.Zero;
 
         /// <summary>
         /// Position relative to this objects parent (if any)
         /// </summary>
         public Vector2 Position {
-            get => Parent == null ? localPosition : (Parent.Position + localPosition);
-            set => localPosition = Parent == null ? value : (value - Parent.Position);
+            get => Parent == null ? LocalPosition : (Parent.Position + LocalPosition);
+            set => LocalPosition = Parent == null ? value : (value - Parent.Position);
         }
 
         /// <summary>
@@ -71,15 +72,25 @@ namespace ConsoleDrawing.Objects
             get => (Parent?.ZDepth + localZDepth) ?? localZDepth;
             set => localZDepth = (value - Parent?.ZDepth) ?? value;
         }
-        
+
         /// <summary>
         /// Same as <see cref="Position"/>, but with <seealso cref="int"/> instead of <seealso cref="float"/>.
         /// </summary>
         public Point ApproxPosition => (Point)Position;
 
+        /// <summary>
+        /// Same as <see cref="LocalPosition"/>, but with <seealso cref="int"/> instead of <seealso cref="float"/>.
+        /// </summary>
+        public Point LocalApproxPosition => (Point)LocalPosition;
+
         public Drawable()
         {
             SetEnabled(true);
+        }
+
+        public Drawable(Drawable parent) : this()
+        {
+            SetParent(parent);
         }
 
         ~Drawable()
@@ -165,10 +176,10 @@ namespace ConsoleDrawing.Objects
 
             SetParent(null);
 
-            lock (all)
-            {
-                all.Remove(this);
-            }
+            //lock (all)
+            //{
+            //    all.Remove(this);
+            //}
         }
 
         /// <summary>
@@ -200,6 +211,16 @@ namespace ConsoleDrawing.Objects
             if (Parent == parent) return true;
 
             return Parent.IsChildOf(parent);
+        }
+
+        public static void print(string format, params object[] args)
+        {
+            debug += string.Format(format, args) + '\n';
+        }
+
+        public static void print(object arg)
+        {
+            debug += (arg?.ToString() ?? "null") + '\n';
         }
     }
 }

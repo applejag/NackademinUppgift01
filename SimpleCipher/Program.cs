@@ -24,7 +24,7 @@ namespace SimpleCipher
                 Console.Write("Skriv en text: ");
                 string input = Console.ReadLine();
 
-                int key = ConsoleHelper.AskForInt("Skriv in ett tal som nyckel: ");
+                int key = AskForInt("Skriv in ett tal som nyckel: ");
 
                 Console.WriteLine();
 
@@ -65,6 +65,24 @@ namespace SimpleCipher
             while (output > CHAR_LAST) output -= CHAR_COUNT;
 
             return (char)output;
+        }
+        
+        static int AskForInt(string prompt)
+        {
+            string input = null;
+            int result;
+
+            do {
+                if (input != null)
+                    Console.WriteLine($"\"{input}\" kunde inte omvandlas till en siffra! Försök igen.");
+
+                Console.Write(prompt);
+                input = Console.ReadLine()
+                    ?.Trim() ?? "";
+
+            } while (!int.TryParse(input, out result));
+
+            return result;
         }
 
     }

@@ -52,6 +52,7 @@
     <Compile Include="Objects\FlashingText.cs" />
     <Compile Include="Objects\Moving.cs" />
     <Compile Include="Objects\Text.cs" />
+    <Compile Include="Objects\TextField.cs" />
     <Compile Include="Objects\Trail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs\Point.cs" />

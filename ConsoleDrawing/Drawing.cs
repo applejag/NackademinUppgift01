@@ -30,6 +30,9 @@ namespace ConsoleDrawing
         private static int currentBufferIndex = 0;
         private static Color? currentFGColor = Color.DEFAULT_FOREGROUND;
         private static Color? currentBGColor = Color.DEFAULT_BACKGROUND;
+
+        private static int cursorBlinkX;
+        private static int cursorBlinkY;
         #endregion
 
         #region Properties
@@ -149,7 +152,8 @@ namespace ConsoleDrawing
             {
                 currentBufferIndex++;
 
-                FillBufferPoint(b, text[i]);
+                if (b >= 0)
+                    FillBufferPoint(b, text[i]);
 
                 int x = b % bufferWidth;
                 if (x == bufferWidth - 1)
@@ -457,13 +461,14 @@ namespace ConsoleDrawing
                 new Coord(0, 0),
                 ref bufferRect);
 
-            int x = CursorX;
-            int y = CursorY;
+            int x = cursorBlinkX;
+            int y = cursorBlinkY;
             bool inWindow = x >= 0 && x < bufferWidth && y >= 0 && y < bufferHeight;
             if (inWindow && CursorVisible)
             {
                 Console.SetCursorPosition(x, y);
-                Console.CursorVisible = true;
+                if (!Console.CursorVisible)
+                    Console.CursorVisible = true;
             }
             else
                 Console.CursorVisible = false;
@@ -491,7 +496,7 @@ namespace ConsoleDrawing
         public static void SetWindowSize(int width, int height)
         {
             fileHandler?.Dispose();
-            fileHandler = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
+            fileHandler = CreateFile(@"CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
 
             short oldWidth = bufferWidth;
             short oldHeight = bufferHeight;
@@ -548,6 +553,27 @@ namespace ConsoleDrawing
         }
 
         /// <summary>
+        /// Sets the cursor blink position on the buffer window.
+        /// </summary>
+        /// <param name="point">The 2D position</param>
+        public static void SetCursorBlinkPosition(Point point)
+        {
+            cursorBlinkX = point.x;
+            cursorBlinkY = point.y;
+        }
+
+        /// <summary>
+        /// Sets the cursor blink position on the buffer window.
+        /// </summary>
+        /// <param name="x">The <paramref name="x"/> position</param>
+        /// <param name="y">The <paramref name="y"/> position</param>
+        public static void SetCursorBlinkPosition(int x, int y)
+        {
+            cursorBlinkX = x;
+            cursorBlinkY = y;
+        }
+
+        /// <summary>
         /// Resets the color attribute to be used on following drawing to default color, 
         /// <seealso cref="Color.GREY"/> for foreground and <seealso cref="Color.BLACK"/> for background.
         /// </summary>
@@ -570,7 +596,7 @@ namespace ConsoleDrawing
             [MarshalAs(UnmanagedType.U4)] int flags,
             IntPtr template);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern bool WriteConsoleOutput(
             SafeFileHandle hConsoleOutput,
             CharInfo[] lpBuffer,
@@ -599,7 +625,7 @@ namespace ConsoleDrawing
         private struct CharUnion
         {
             [FieldOffset(0)] public char UnicodeChar;
-            [FieldOffset(0)] public byte AsciiChar;
+            //[FieldOffset(0)] public byte AsciiChar;
         }
 
         [StructLayout(LayoutKind.Explicit)]
@@ -610,13 +636,13 @@ namespace ConsoleDrawing
             [FieldOffset(0)] public CharUnion Char;
             [FieldOffset(2)] public short Attributes;
 
-            public static CharInfo NewAsciiChar(byte ascii, short attributes = DEFAULT_ATTRIBUTE)
-            {
-                var info = new CharInfo();
-                info.Char.AsciiChar = ascii;
-                info.Attributes = attributes;
-                return info;
-            }
+            //public static CharInfo NewAsciiChar(byte ascii, short attributes = DEFAULT_ATTRIBUTE)
+            //{
+            //    var info = new CharInfo();
+            //    info.Char.AsciiChar = ascii;
+            //    info.Attributes = attributes;
+            //    return info;
+            //}
 
             public static CharInfo NewUnicodeChar(char unicode, short attributes = DEFAULT_ATTRIBUTE)
             {

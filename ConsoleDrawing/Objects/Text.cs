@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Helpers;
 
 namespace ConsoleDrawing.Objects
 {
@@ -13,30 +14,20 @@ namespace ConsoleDrawing.Objects
         private string _text;
         public string text {
             get => _text;
-            set => _lines = SplitString(_text = value, maxWidth);
+            set => _lines = StringHelper.SplitString(_text = value, maxWidth);
         }
         public int maxWidth;
         public Color? foregroundColor = Color.GREY;
         public Color? backgroundColor = null;
 
-        private static string[] SplitString(string text, int maxWidth)
+        public Text(string text, Drawable parent = null) : base(parent)
         {
-            List<string> list = new List<string>(text.Split('\n'));
+            this.text = text;
+        }
 
-            if (maxWidth > 0)
-            {
-                for (int i = 0; i < list.Count; i++)
-                {
-                    if (list[i].Length > maxWidth)
-                    {
-                        if (list[i].Length != maxWidth + 1)
-                            list.Insert(i + 1, list[i].Substring(maxWidth + 1));
-                        list[i] = list[i].Substring(0, maxWidth);
-                    }
-                }
-            }
-
-            return list.ToArray();
+        public Text(Drawable parent = null) : base(parent)
+        {
+            this.text = string.Empty;
         }
 
         public override void Draw()
