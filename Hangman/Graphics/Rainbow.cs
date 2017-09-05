@@ -19,8 +19,8 @@ namespace Hangman.Graphics
         {
             ZDepth = 5;
         }
-        
-        public override void Update()
+
+        protected override void Update()
         {
             if (showingAngle < 180)
             {
@@ -28,7 +28,7 @@ namespace Hangman.Graphics
             }
         }
 
-        public override void Draw()
+        protected override void Draw()
         {
             int width = Drawing.BufferWidth;
             int height = Drawing.BufferHeight;

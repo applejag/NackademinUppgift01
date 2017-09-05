@@ -26,8 +26,7 @@ namespace ConsoleDrawing
 
         private static short bufferWidth;
         private static short bufferHeight;
-
-        private static int currentBufferIndex = 0;
+        
         private static Color? currentFGColor = Color.DEFAULT_FOREGROUND;
         private static Color? currentBGColor = Color.DEFAULT_BACKGROUND;
 
@@ -58,30 +57,17 @@ namespace ConsoleDrawing
         /// <summary>
         /// Get or sets the current cursor position on the x-axis
         /// </summary>
-        public static int CursorX
-        {
-            get => currentBufferIndex % bufferWidth;
-            set
-            {
-                int y = CursorY;
-                int index = y * bufferWidth + value;
-                currentBufferIndex = index;
-            }
-        }
+        public static int CursorX { get; set; }
 
         /// <summary>
         /// Gets or sets the current cursor position on the y-axis
         /// </summary>
-        public static int CursorY
-        {
-            get => currentBufferIndex / bufferWidth;
-            set
-            {
-                int x = CursorX;
-                int index = value * bufferWidth + x;
-                currentBufferIndex = index;
-            }
-        }
+        public static int CursorY { get; set; }
+
+        /// <summary>
+        /// Returns true if the current <see cref="CursorX"/> and <see cref="CursorY"/> position is inside the drawing window.
+        /// </summary>
+        public static bool CursorOnScreen => CursorX >= 0 && CursorX < BufferWidth && CursorY >= 0 && CursorY < BufferHeight;
 
         /// <summary>
         /// Gets or sets the current color attribute for foreground coloring.
@@ -117,12 +103,22 @@ namespace ConsoleDrawing
 
             int length = text.Length;
 
-            for (int b = currentBufferIndex, i = 0; b < bufferSize && i < length; b++, i++)
+            for (int i = 0; i < length; i++)
             {
-                FillBufferPoint(b, text[i]);
-            }
+                if (CursorX >= BufferWidth)
+                {
+                    CursorX = 0;
+                    CursorY++;
+                }
 
-            currentBufferIndex += length;
+                if (CursorOnScreen)
+                {
+                    int index = CursorY * bufferWidth + CursorX;
+                    FillBufferPoint(index, text[i]);
+                }
+
+                CursorX++;
+            }
         }
 
         /// <summary>
@@ -148,16 +144,15 @@ namespace ConsoleDrawing
             if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
 
             int length = text.Length;
-            for (int b = currentBufferIndex, i = 0; b < bufferSize && i < length; b++, i++)
+            for (int i = 0; i < length; i++)
             {
-                currentBufferIndex++;
+                if (CursorOnScreen)
+                {
+                    int index = CursorY * bufferWidth + CursorX;
+                    FillBufferPoint(index, text[i]);
+                }
 
-                if (b >= 0)
-                    FillBufferPoint(b, text[i]);
-
-                int x = b % bufferWidth;
-                if (x == bufferWidth - 1)
-                    break;
+                CursorX++;
             }
         }
         
@@ -170,12 +165,14 @@ namespace ConsoleDrawing
         public static void Write(char letter)
         {
             if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
-
-            if (currentBufferIndex >= 0 && currentBufferIndex < bufferSize)
+            
+            if (CursorOnScreen)
             {
-                FillBufferPoint(currentBufferIndex, letter);
+                int index = CursorY * bufferWidth + CursorX;
+                FillBufferPoint(index, letter);
             }
-            currentBufferIndex++;
+
+            CursorX++;
         }
 
         /// <summary>
@@ -203,7 +200,8 @@ namespace ConsoleDrawing
             if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
 
             WriteWrap(text);
-            currentBufferIndex = (CursorY + 1) * bufferWidth;
+            CursorY++;
+            CursorX = 0;
         }
 
         /// <summary>
@@ -215,7 +213,7 @@ namespace ConsoleDrawing
         {
             if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
 
-            currentBufferIndex = 0;
+            SetCursorPosition(0, 0);
 
             Fill(' ');
         }
@@ -228,15 +226,16 @@ namespace ConsoleDrawing
         public static void ClearLine()
         {
             if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
+            
+            int startAt = CursorY * bufferWidth;
+            int stopAt = Math.Min(startAt + bufferWidth, bufferSize);
 
-            int y = currentBufferIndex / bufferWidth;
-            currentBufferIndex = y * bufferWidth;
-
-            int stopAt = Math.Min(currentBufferIndex + bufferWidth, bufferSize);
-            for (int b = currentBufferIndex; b < stopAt; b++)
+            for (int b = startAt; b < stopAt; b++)
             {
                 FillBufferPoint(b, ' ');
             }
+
+            CursorX = 0;
         }
         
         /// <summary>
@@ -539,17 +538,15 @@ namespace ConsoleDrawing
         }
 
         /// <summary>
-        /// Sets the cursor position on the buffer window.
+        /// Sets the cursor position on the buffer window for text writing.
+        /// <para>See also: <seealso cref="Write(string)"/>, <seealso cref="WriteLine(string)"/></para>
         /// </summary>
         /// <param name="x">The <paramref name="x"/> position</param>
         /// <param name="y">The <paramref name="y"/> position</param>
-        /// <exception cref="InvalidOperationException">Thrown if called before <seealso cref="Initialize"/></exception>
         public static void SetCursorPosition(int x, int y)
         {
-            if (buffer == null) throw new InvalidOperationException(ERR_NOT_INITIALIZED);
-
-            int index = y * bufferWidth + x;
-            currentBufferIndex = index;
+            CursorX = x;
+            CursorY = y;
         }
 
         /// <summary>

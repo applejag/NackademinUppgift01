@@ -11,12 +11,12 @@ namespace ConsoleDrawing.Objects
         public Action OnUpdate;
         public Action OnDraw;
 
-        public override void Update()
+        protected override void Update()
         {
             OnUpdate?.Invoke();
         }
 
-        public override void Draw()
+        protected override void Draw()
         {
             OnDraw?.Invoke();
         }

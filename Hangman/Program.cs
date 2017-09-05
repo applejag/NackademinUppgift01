@@ -12,7 +12,6 @@ namespace Hangman
 {
     class Program
     {
-        const int ANTAL_GISSNINGAR = 5;
 
         static void Main(string[] args)
         {
@@ -20,12 +19,7 @@ namespace Hangman
             Drawing.FixedSize = true;
             Drawing.CursorVisible = false;
 
-            Console.WriteLine("Den som ska spela måste titta bort nu!");
-            Console.Write("Skriv in ett ord: ");
-
-            var hemligaOrdet = new SecretWord(Console.ReadLine(), ANTAL_GISSNINGAR);
-            
-            new Controller(hemligaOrdet);
+            new ReadWord();
             Time.RunFrameTimer();
             
             /*
@@ -39,8 +33,6 @@ namespace Hangman
             ConsoleHelper.WaitBeforeExit();
 
         }
-
-        
 
     }
 }

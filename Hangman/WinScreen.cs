@@ -12,18 +12,21 @@ namespace Hangman
         protected Text wordText;
 
         private Vector2 startPos;
-        private float moveLapsed = 0;
-        private const float moveDuration = 3;
+        private float wordMoveLapsed = 0;
+        private float wordMoveSpeed = 0;
 
-        private Drawable container;
-        private float moveAwaySpeed;
+        private Drawable oldTextsContainer;
+        private float oldTextsMoveSpeed;
+
+        private float fireworksDelay = 1;
+        private float fireworksLapsed = -5;
 
         public WinScreen(SecretWord secretWord, Text wordText, Text[] otherTexts) : base(null)
         {
-            container = new Dummy();
+            oldTextsContainer = new Dummy();
             foreach (Text text in otherTexts)
             {
-                text.SetParent(container);
+                text.SetParent(oldTextsContainer);
             }
 
             this.secretWord = secretWord;
@@ -36,52 +39,86 @@ namespace Hangman
             wordText.Position += Point.Right * (blen - alen);
 
             startPos = wordText.Position;
+
+            new YouWonText();
         }
 
-        public override void Update()
+        protected override void Update()
         {
-            if ((container?.Destroyed ?? true) == false)
-            {
-                moveAwaySpeed += Time.DeltaTime;
-                container.LocalPosition += Vector2.Left * moveAwaySpeed * Time.DeltaTime;
-                if (container.LocalPosition.x < -50)
-                    container.Destroy();
-            }
-
-            if (moveLapsed < moveDuration)
-            {
-                moveLapsed += Time.DeltaTime;
-                Vector2 targetPos = new Vector2((Drawing.BufferWidth - wordText.text.Length) * 0.5f,
-                    Drawing.BufferHeight - 10);
-
-                if (moveLapsed >= moveDuration)
-                {
-                    wordText.Destroy();
-                    
-                    wordText = new FlashingText
-                    {
-                        Position = targetPos,
-                        text = secretWord.RenderWord(),
-                        foregrounds = new[] {Color.LIGHT_YELLOW, Color.WHITE},
-                    };
-
-                    new Firework();
-                    new Airplane();
-                    new Rainbow {showingAngle = -180,};
-                }
-                else
-                {
-                    float t = moveLapsed / moveDuration;
-                    Vector2 newPos = Vector2.Lerp(startPos, targetPos, t);
-                    newPos.y = MathHelper.SmoothDamp(newPos.y, startPos.y, targetPos.y);
-                    wordText.Position = newPos;
-                }
-            }
+            ShootFireworks();
+            MoveOldTextObjects();
+            MoveWordTextObject();
+            print("its flashing? {0}", wordText is FlashingText);
+            print("its xpos? {0}", wordText.Position.x);
         }
 
-        public override void Draw()
+        protected override void Draw()
         {
             //throw new System.NotImplementedException();
+        }
+
+        private void MoveOldTextObjects()
+        {
+            if ((oldTextsContainer?.Destroyed ?? true) == false)
+            {
+                oldTextsMoveSpeed += Time.DeltaTime;
+                oldTextsContainer.LocalPosition += Vector2.Left * oldTextsMoveSpeed * Time.DeltaTime;
+                if (oldTextsContainer.LocalPosition.x < -50)
+                    oldTextsContainer.Destroy();
+            }
+        }
+
+        private void ShootFireworks()
+        {
+            fireworksLapsed += Time.DeltaTime;
+            if (fireworksLapsed > fireworksDelay)
+            {
+                fireworksLapsed = 0;
+                new Firework {ZDepth = 3};
+            }
+        }
+
+        private void MoveWordTextObject()
+        {
+            if (wordText is FlashingText) return;
+
+            wordMoveSpeed += Time.DeltaTime * 0.05f;
+            wordMoveLapsed += wordMoveSpeed * Time.DeltaTime;
+
+            Vector2 targetPos = new Vector2((Drawing.BufferWidth - wordText.text.Length) * 0.5f,
+                Drawing.BufferHeight - 10);
+
+            if (wordMoveLapsed >= 1)
+            {
+                wordText.Destroy();
+
+                targetPos.x = Drawing.BufferWidth * 0.5f;
+
+                wordText = new FlashingText
+                {
+                    alignment = Text.Alignment.Center,
+                    Position = targetPos,
+                    text = secretWord.RenderWord(),
+                    foregrounds = new[] { Color.LIGHT_YELLOW, Color.WHITE },
+                };
+
+                new Text
+                {
+                    alignment = Text.Alignment.Center,
+                    Position = targetPos + Point.Up,
+                    text = "word was:",
+                    foregroundColor = Color.GREY,
+                };
+                    
+                new Airplane();
+                new Rainbow { showingAngle = -120, ZDepth = 4};
+            }
+            else
+            {
+                Vector2 newPos = Vector2.Lerp(startPos, targetPos, wordMoveLapsed);
+                newPos.y = MathHelper.SmoothDamp(newPos.y, startPos.y, targetPos.y);
+                wordText.Position = newPos;
+            }
         }
     }
 }

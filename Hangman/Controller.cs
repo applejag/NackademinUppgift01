@@ -34,7 +34,7 @@ namespace Hangman
             wordText = new Text($"Ord: {secretWord.RenderWord()}", parent: this);
 
             missesText.foregroundColor = Color.LIGHT_YELLOW;
-            inputField.OnSubmit += OnInputFieldSubmit;
+            inputField.Submitted += OnInputFieldSubmit;
         }
 
         private void OnInputFieldSubmit(TextField field)
@@ -89,11 +89,11 @@ namespace Hangman
                 Update();
 
                 var wordLabelText = new Text("Ord:", parent: wordText) {Position = wordText.Position};
+                inputField.Destroy();
 
                 Text[] textDrawables = {
                     wordLabelText,
                     errorText,
-                    inputField,
                     missesLabelText,
                     missesText,
                     triesLeftText,
@@ -110,7 +110,7 @@ namespace Hangman
             }
         }
 
-        public override void Update()
+        protected override void Update()
         {
             int row = 0;
 
@@ -133,7 +133,7 @@ namespace Hangman
             inputField.LocalPosition = Point.Right * prompt.text.Length;
         }
 
-        public override void Draw()
+        protected override void Draw()
         {
             //throw new NotImplementedException();
         }

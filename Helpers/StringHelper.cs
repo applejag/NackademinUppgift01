@@ -5,7 +5,7 @@ namespace Helpers
 {
     public static class StringHelper
     {
-        private static readonly string[] Newlines = {"\n\r", "\r\n", "\r", "\n"};
+        public static readonly string[] Newlines = {"\n\r", "\r\n", "\r", "\n"};
 
         public static string[] SplitString(string text, int maxWidth)
         {

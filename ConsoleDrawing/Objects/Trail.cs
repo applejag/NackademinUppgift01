@@ -3,6 +3,7 @@ using Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,13 +19,13 @@ namespace ConsoleDrawing.Objects
 
         private Point oldPosition;
 
-        public Trail(double time = 5, Color color = Color.LIGHT_CYAN) : base()
+        public Trail(double time = 5, Color color = Color.LIGHT_CYAN) : base(null)
         {
             TimeToLive = time;
             Color = color;
         }
 
-        public override void Draw()
+        protected override void Draw()
         {
             int numPoints = points?.Count ?? 0;
             if (numPoints > 1)
@@ -46,7 +47,7 @@ namespace ConsoleDrawing.Objects
             }
         }
 
-        public override void Update()
+        protected override void Update()
         {
             Point approx = ApproxPosition;
 

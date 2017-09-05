@@ -15,7 +15,6 @@ namespace Hangman.Graphics
     {
         public static readonly Color[] colors = { Color.CYAN, Color.GREEN, Color.RED, Color.YELLOW };
 
-        public const float GRAVITY = 9.81f;
         protected Trail trail;
         protected float start;
         protected float lifetime;
@@ -37,13 +36,13 @@ namespace Hangman.Graphics
             lifetime = RandomHelper.Range(1.5f, 2.2f);
         }
 
-        public override void Draw()
+        protected override void Draw()
         {
             Drawing.BackgroundColor = lightColor;
             Drawing.FillPoint(ApproxPosition, ' ');
         }
 
-        public override void Update()
+        protected override void Update()
         {
             base.Update();
 
@@ -54,7 +53,7 @@ namespace Hangman.Graphics
                 // Create explosion
                 for (int i = 0; i < 50; i++)
                 {
-                    var particle = new Particle
+                    new Particle
                     {
                         Position = Position,
                         color = RandomHelper.Float >= 0.3f ? lightColor : color,
@@ -64,11 +63,6 @@ namespace Hangman.Graphics
                 // Drop trail
                 trail.SetParent(null);
                 trail.SelfDestruct = true;
-                
-                try
-                {
-                    onExplosion?.Invoke();
-                } catch { /* Failed to play sound */ }
 
                 Destroy();
             }
@@ -76,7 +70,6 @@ namespace Hangman.Graphics
 
         public class Particle : Moving
         {
-            public const float GRAVITY = 9.81f;
             public Color color;
 
             private bool isForeground;
@@ -92,7 +85,7 @@ namespace Hangman.Graphics
                 isForeground = RandomHelper.Float > 0.5f;
             }
 
-            public override void Draw()
+            protected override void Draw()
             {
                 if (isForeground)
                 {
@@ -108,7 +101,7 @@ namespace Hangman.Graphics
                 }
             }
 
-            public override void Update()
+            protected override void Update()
             {
                 base.Update();
 

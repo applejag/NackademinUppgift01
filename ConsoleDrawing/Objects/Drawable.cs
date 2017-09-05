@@ -13,7 +13,8 @@ namespace ConsoleDrawing.Objects
     public abstract class Drawable
     {
         internal static readonly List<Drawable> all = new List<Drawable>();
-        internal static string debug = string.Empty;
+        private static readonly List<string> debug = new List<string>();
+        private static readonly object locker = new object();
 
         private bool m_Initiated = false;
         private bool m_Destroyed = false;
@@ -153,8 +154,8 @@ namespace ConsoleDrawing.Objects
             m_Enabled = state;
         }
         
-        public abstract void Update();
-        public abstract void Draw();
+        protected abstract void Update();
+        protected abstract void Draw();
 
         /// <summary>
         /// Destroy this drawable. Makes it inactive.
@@ -215,12 +216,68 @@ namespace ConsoleDrawing.Objects
 
         public static void print(string format, params object[] args)
         {
-            debug += string.Format(format, args) + '\n';
+#if DEBUG
+            debug.Add(string.Format(format, args));
+#endif
         }
 
         public static void print(object arg)
         {
-            debug += (arg?.ToString() ?? "null") + '\n';
+#if DEBUG
+            debug.Add(arg?.ToString() ?? "null");
+#endif
+        }
+
+        internal static void FrameCallback()
+        {
+            lock (locker)
+            {
+                // Fix size
+                if (Drawing.FixedSize == false)
+                {
+                    if (Console.WindowWidth != Drawing.BufferWidth || Console.WindowHeight != Drawing.BufferHeight)
+                        Drawing.SetWindowSize(Console.WindowWidth, Drawing.BufferHeight);
+                }
+
+                lock (all)
+                {
+                    // Update
+                    Input.AnalyzeInput();
+                    for (int i = all.Count - 1; i >= 0; i--)
+                    {
+                        // GC & Update each one
+                        Drawable drawable = all[i];
+                        if (drawable?.Destroyed ?? true)
+                            all.RemoveAt(i);
+                        else if (drawable.Enabled)
+                            drawable.Update();
+                    }
+
+                    // Draw
+                    Drawing.ResetColor();
+                    Drawing.Clear();
+
+                    all.Sort((a, b) => b.ZDepth.CompareTo(a.ZDepth));
+                    foreach (Drawable drawable in all)
+                        if (drawable?.Enabled ?? false)
+                            drawable.Draw();
+
+#if DEBUG
+                    // Debug text
+                    Drawing.BackgroundColor = null;
+                    Drawing.ForegroundColor = Color.GREEN;
+                    int debugLength = debug.Count;
+                    for (int i = 0; i < debugLength; i++)
+                    {
+                        Drawing.SetCursorPosition(0, Drawing.BufferHeight - debugLength + i);
+                        Drawing.Write("<DEBUG> " + debug[i]);
+                    }
+                    debug.Clear();
+#endif
+
+                    Drawing.Render();
+                }
+            }
         }
     }
 }

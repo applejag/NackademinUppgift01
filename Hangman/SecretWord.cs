@@ -86,6 +86,22 @@ namespace Hangman
             return rättGissat;
         }
 
+        public static string RenderPreview(string input)
+        {
+            string output = string.Empty;
+            string parsed = Parse(input);
+            int length = parsed.Length;
+
+            for (int i = 0; i < length; i++)
+            {
+                output += parsed[i];
+                if (i != length - 1)
+                    output += CHAR_SPACING;
+            }
+
+            return output;
+        }
+
         public string RenderWord()
         {
             string output = string.Empty;

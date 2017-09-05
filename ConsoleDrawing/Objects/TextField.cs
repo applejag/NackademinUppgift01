@@ -5,7 +5,8 @@ namespace ConsoleDrawing.Objects
 {
     public class TextField : Text
     {
-        public event Action<TextField> OnSubmit;
+        public event Action<TextField> Submitted;
+        public event Action<TextField> Changed;
         public bool selected = true;
 
         public TextField(string text, Drawable parent = null) : base(text, parent)
@@ -16,25 +17,37 @@ namespace ConsoleDrawing.Objects
         public TextField(Drawable parent = null) : base(parent)
         {}
 
-        public override void Update()
+        protected override void Update()
         {
             base.Update();
 
             if (!selected) return;
 
-            text += Input.InputString;
+            bool changed = false;
+
+            if ((Input.InputString?.Length ?? 0) > 0)
+            {
+                text += Input.InputString;
+                changed = true;
+            }
 
             if (Input.GetKeyDown(ConsoleKey.Backspace) && text.Length > 0)
+            {
                 text = text.Substring(0, Math.Max(text.Length - 2, 0));
+                changed = true;
+            }
+
+            if (changed)
+                Changed?.Invoke(this);
 
             if (Input.GetKeyDown(ConsoleKey.Enter))
             {
-                OnSubmit?.Invoke(this);
+                Submitted?.Invoke(this);
                 text = string.Empty;
             }
         }
 
-        public override void Draw()
+        protected override void Draw()
         {
             base.Draw();
 

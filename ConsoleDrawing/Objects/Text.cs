@@ -20,6 +20,8 @@ namespace ConsoleDrawing.Objects
         public Color? foregroundColor = Color.GREY;
         public Color? backgroundColor = null;
 
+        public Alignment alignment = Alignment.Left;
+
         public Text(string text, Drawable parent = null) : base(parent)
         {
             this.text = text;
@@ -30,28 +32,36 @@ namespace ConsoleDrawing.Objects
             this.text = string.Empty;
         }
 
-        public override void Draw()
+        protected override void Draw()
         {
             Drawing.ForegroundColor = foregroundColor;
             Drawing.BackgroundColor = backgroundColor;
-            Point approx = ApproxPosition;
-            int left = Math.Max(-approx.x, 0);
-            if (approx.x < 0) approx.x = 0;
+
+            Vector2 pos = Position;
+            float x = pos.x;
 
             foreach (string part in _lines)
             {
-                if (left <= part.Length) {
-                    Drawing.SetCursorPosition(approx);
-                    Drawing.Write(part.Substring(left));
-                }
+                if (alignment == Alignment.Center)
+                    pos.x = x - part.Length * 0.5f;
+                else if (alignment == Alignment.Right)
+                    pos.x = x - part.Length;
 
-                approx.y += 1;
+                Drawing.SetCursorPosition((Point)pos);
+                Drawing.Write(part);
+
+                pos.y += 1;
             }
         }
 
-        public override void Update()
+        protected override void Update()
         {
             //throw new NotImplementedException();
+        }
+
+        public enum Alignment
+        {
+            Left, Center, Right
         }
     }
 }

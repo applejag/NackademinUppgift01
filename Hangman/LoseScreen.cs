@@ -11,12 +11,12 @@ namespace Hangman
             this.secretWord = secretWord;
         }
 
-        public override void Update()
+        protected override void Update()
         {
             //throw new System.NotImplementedException();
         }
 
-        public override void Draw()
+        protected override void Draw()
         {
             //throw new System.NotImplementedException();
         }

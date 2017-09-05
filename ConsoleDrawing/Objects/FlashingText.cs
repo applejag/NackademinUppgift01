@@ -16,7 +16,7 @@ namespace ConsoleDrawing.Objects
         /// </summary>
         public float interval = 1;
 
-        public override void Update()
+        protected override void Update()
         {
             int numForegrounds = foregrounds?.Length ?? 0;
             if (numForegrounds > 0)

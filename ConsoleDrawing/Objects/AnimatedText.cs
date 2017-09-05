@@ -24,12 +24,21 @@ namespace ConsoleDrawing.Objects
             set => text = frames[_frameIndex = value];
         }
 
+        public AnimatedText(Drawable parent = null) : base(parent)
+        { }
+
+        public AnimatedText(string pathOfAnimation, Drawable parent = null) : base(parent)
+        {
+            frames = LoadFromFile(pathOfAnimation);
+            FrameIndex = 0;
+        }
+
         public void StepFrame()
         {
             FrameIndex = MathHelper.Wrap(FrameIndex + 1, frames.Length);
         }
 
-        public override void Update()
+        protected override void Update()
         {
             if (interval > 0)
             {
@@ -59,7 +68,7 @@ namespace ConsoleDrawing.Objects
                     int height = size[1];
 
                     string buffer = reader.ReadToEnd();
-                    string[] rows = buffer.Split('\n');
+                    string[] rows = buffer.Split(StringHelper.Newlines, StringSplitOptions.None);
 
                     string[] frames = new string[rows.Length / height];
                     for (int i = 0; i < rows.Length; i++)
