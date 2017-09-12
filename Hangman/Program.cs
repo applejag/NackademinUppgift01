@@ -18,7 +18,7 @@ namespace Hangman
             Drawing.SetWindowSize(120, 35);
             Drawing.FixedSize = true;
             Drawing.CursorVisible = false;
-
+             
             new ReadWord();
             Time.RunFrameTimer();
             

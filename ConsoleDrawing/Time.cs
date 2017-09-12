@@ -14,7 +14,7 @@ namespace ConsoleDrawing
     {
         private static readonly Stopwatch stopwatch = new Stopwatch();
         private static float deltaTime = 0;
-        private static long millisecondsPerFrame = 0;
+        private static long millisecondsPerFrame = 1000/60;
         private static long lastFrameTime = 0;
         private static bool running = false;
 

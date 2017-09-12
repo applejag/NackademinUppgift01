@@ -15,7 +15,7 @@ namespace Hangman.Graphics
         private bool movingRight = true;
         private float speed = 2;
 
-        public Snoop() : base("Animations/Snoop.txt")
+        public Snoop(Drawable parent = null) : base("Animations/Snoop.txt", parent)
         {
             width = frames.Max(x => x.Split(StringHelper.Newlines, StringSplitOptions.None).Max(j => j.Length));
             height = frames.Max(x => x.Split(StringHelper.Newlines, StringSplitOptions.None).Length);

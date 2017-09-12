@@ -106,7 +106,7 @@ namespace Hangman
                 {
                     alignment = Text.Alignment.Center,
                     Position = targetPos + Point.Up,
-                    text = " word was: ",
+                    text = " ordet var: ",
                     foregroundColor = Color.GREY,
                     backgroundColor = Color.BLACK,
                 };
